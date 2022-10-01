@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/home"
+        android:icon="@drawable/ic_home"
+        android:title="home"
+        android:contentDescription="description_home"
+        app:showAsAction="always"
+        />
+
+    <item
+        android:id="@+id/app"
+        android:icon="@drawable/ic_app"
+        android:title="app"
+        android:contentDescription="description_app"
+        app:showAsAction="always"
+        />
+
+    <item
+        android:id="@+id/message"
+        android:icon="@drawable/ic_message"
+        android:title="message"
+        android:contentDescription="description_message"
+        app:showAsAction="always"
+        />
+
+    <item
+        android:id="@+id/clip"
+        android:icon="@drawable/ic_texture_grey"
+        android:title="clip"
+        android:contentDescription="description_clip"
+        app:showAsAction="always"
+        />
+
+    <item
+        android:id="@+id/video"
+        android:icon="@drawable/ic_video"
+        android:title="video"
+        android:contentDescription="description_video"
+        app:showAsAction="always"
+        />
+
+</menu>

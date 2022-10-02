@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">Homework</string>
+
+    <!-- Activities -->
+    <string name="activity_main">Main Activity</string>
+    <string name="activity_second">Second Activity</string>
+
+    <!-- Buttons -->
+    <string name="implicit1">Implicit 01</string>
+    <string name="implicit2">Implicit 02</string>
+    <string name="implicit3">Implicit 03</string>
+    <string name="direct_to_second">Go to second activity</string>
+    <string name="direct_to_main">Go to main activity</string>
+
+
 </resources>

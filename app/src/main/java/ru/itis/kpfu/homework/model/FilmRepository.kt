@@ -178,11 +178,13 @@ object FilmRepository {
     }.toMutableList()
 
     val mainItems = arrayListOf<MainItem>().apply {
-        add(MainItem.Ads("Здесь могла быть ваша реклама"))
+        add(MainItem.Ads("Здесь могла быть ваша реклама", 110))
         addAll(filmsUI.subList(0, 5))
-        add(MainItem.Ads("Здесь могла быть ваша реклама"))
-        addAll(filmsUI.subList(6, 11))
-        add(MainItem.Ads("Здесь могла быть ваша реклама"))
-        addAll(filmsUI.subList(12, 17))
+        add(MainItem.Ads("Здесь могла быть ваша реклама", 110))
+        addAll(filmsUI.subList(5, 10))
+        add(MainItem.Ads("Здесь могла быть ваша реклама", 110))
+        addAll(filmsUI.subList(10, 15))
+        add(MainItem.Ads("Здесь могла быть ваша реклама", 110))
+        addAll(filmsUI.subList(15, 19))
     }
 }

@@ -1,6 +1,7 @@
 package ru.itis.kpfu.homework.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Priority
@@ -46,7 +47,6 @@ class FilmHolder(
                 .into(ivCover)
         }
     }
-
 
     companion object {
 

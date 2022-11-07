@@ -12,7 +12,7 @@ import java.lang.IllegalStateException
 
 class FilmAdapter(
     private val glide: RequestManager,
-    private val delete: (((Int)) -> Unit)?
+    private val delete: (MainItem.FilmUiModel) -> Unit,
 ) : ListAdapter<MainItem, RecyclerView.ViewHolder>(FilmDiff) {
 
     override fun onCreateViewHolder(
@@ -33,21 +33,6 @@ class FilmAdapter(
             is MainItem.FilmUiModel -> (holder as FilmHolder).onBind(item)
         }
     }
-
-//    override fun onBindViewHolder(
-//        holder: RecyclerView.ViewHolder,
-//        position: Int,
-//        payloads: MutableList<Any>
-//    ) {
-//        if(payloads.isEmpty()) {
-//            super.onBindViewHolder(holder, position, payloads)
-//        } else {
-//            when(getItem(position)) {
-//                is MainItem.FilmUiModel -> (holder as FilmHolder).updateFromBundle(payloads.last() as? Bundle)
-//                else -> {}
-//            }
-//        }
-//    }
 
     override fun getItemViewType(position: Int): Int {
         return when(getItem(position)) {

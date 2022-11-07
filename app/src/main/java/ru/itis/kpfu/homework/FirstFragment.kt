@@ -1,6 +1,7 @@
 package ru.itis.kpfu.homework;
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -25,7 +26,7 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
             val itemDecoration = SpaceItemDecorator(requireContext(),16f)
 
             listAdapter = FilmAdapter(glide = Glide.with(this@FirstFragment)) {
-
+                deleteItem(it.id, it.year)
             }
 
             rvFilm.adapter = listAdapter
@@ -42,6 +43,14 @@ class FirstFragment : Fragment(R.layout.fragment_first) {
 
             listAdapter?.submitList(FilmRepository.mainItems)
         }
+    }
+
+    private fun deleteItem(position: Int, year: Int){
+        val currentList =  listAdapter?.currentList?.toMutableList()
+        currentList?.removeAt(position)
+        listAdapter?.submitList(currentList)
+        Log.d("My", "$year + $position")
+
     }
 
     private fun myUpdateOperation() {

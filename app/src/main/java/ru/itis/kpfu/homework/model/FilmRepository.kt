@@ -1,7 +1,5 @@
 package ru.itis.kpfu.homework.model
 
-import ru.itis.kpfu.homework.R
-
 object FilmRepository {
     val films = arrayListOf(
         Film(
@@ -166,10 +164,11 @@ object FilmRepository {
         ),
         )
 
-    private val filmsUI: MutableList<MainItem.FilmUiModel>
+    val filmsUI: MutableList<MainItem.FilmUiModel>
     get() = films.map {
 
         MainItem.FilmUiModel(
+            id = it.id,
             title = it.title,
             year = it.year,
             genre = it.genre,
@@ -179,15 +178,11 @@ object FilmRepository {
     }.toMutableList()
 
     val mainItems = arrayListOf<MainItem>().apply {
-        var kostil = 0
-        for (index in 0 until filmsUI.size) {
-            if (index % 6 == 0) {
-                add(MainItem.Ads("Здесь могла быть ваша реклама"))
-                kostil++
-            } else {
-                add(filmsUI[index - kostil])
-            }
-        }
+        add(MainItem.Ads("Здесь могла быть ваша реклама"))
+        addAll(filmsUI.subList(0, 5))
+        add(MainItem.Ads("Здесь могла быть ваша реклама"))
+        addAll(filmsUI.subList(6, 11))
+        add(MainItem.Ads("Здесь могла быть ваша реклама"))
+        addAll(filmsUI.subList(12, 17))
     }
-
 }

@@ -14,7 +14,7 @@ import ru.itis.kpfu.homework.model.MainItem.FilmUiModel
 class FilmHolder(
     private val binding: ItemFilmBinding,
     private val glide: RequestManager,
-    private val delete: (((Int)) -> Unit)?
+    private val delete: (FilmUiModel) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
 
     private var film: FilmUiModel? = null
@@ -25,7 +25,7 @@ class FilmHolder(
 
     init {
         binding.ivDelete.setOnClickListener {
-            delete?.invoke(adapterPosition)
+            film?.also(delete)
         }
     }
 
@@ -45,7 +45,6 @@ class FilmHolder(
                 .error(R.drawable.placeholder)
                 .into(ivCover)
         }
-
     }
 
 
@@ -54,7 +53,7 @@ class FilmHolder(
         fun create(
             parent: ViewGroup,
             glide: RequestManager,
-            delete: (((Int)) -> Unit)?
+            delete: (FilmUiModel) -> Unit,
         ): FilmHolder = FilmHolder(
             binding = ItemFilmBinding.inflate(
                 LayoutInflater.from(parent.context),

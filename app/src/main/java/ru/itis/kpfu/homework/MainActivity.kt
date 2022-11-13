@@ -7,8 +7,10 @@ import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContracts
 import ru.itis.kpfu.homework.databinding.ActivityMainBinding
 import android.Manifest
+import android.graphics.Bitmap
 import android.net.Uri
 import com.bumptech.glide.Glide
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -43,8 +45,8 @@ class MainActivity : AppCompatActivity() {
             btLoadPhoto.setOnClickListener {
                 intentTest()
             }
-        }
 
+        }
     }
 
     private fun intentTest() {

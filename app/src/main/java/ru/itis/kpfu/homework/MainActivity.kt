@@ -15,21 +15,19 @@ class MainActivity : AppCompatActivity() {
     private var binding: ActivityMainBinding? = null
 
     private val multiplyPermissions = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-//        val isCameraGranted = it[Manifest.permission.CAMERA]
-//        val isReadStorageGranted = it[Manifest.permission.READ_EXTERNAL_STORAGE]
-//        if (isCameraGranted == true && isReadStorageGranted == true) {
-//
-//        } else {
-//
-//        }
+        val isCameraGranted = it[Manifest.permission.CAMERA]
+        val isReadStorageGranted = it[Manifest.permission.READ_EXTERNAL_STORAGE]
+        if (isCameraGranted != true || isReadStorageGranted != true) {
+            finish()
+        }
     }
 
-    private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { imageURI: Uri? ->
-        binding?.ivPhoto?.let {
+    private val getPhoto = registerForActivityResult(PhotoContract()) { image ->
+        binding?.ivPhoto?.let { imageView ->
             Glide.with(this)
-                .load(imageURI)
+                .load(image)
                 .centerCrop()
-                .into(it)
+                .into(imageView)
         }
     }
 
@@ -41,47 +39,26 @@ class MainActivity : AppCompatActivity() {
 
         multiplyPermissions.launch(arrayOf(Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE))
 
-//        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).takeIf {
-//            it.resolveActivity(this.packageManager) != null
-//        }
-
-//        val galleryIntent = Intent(Intent.ACTION_PICK).apply {
-//            type = "image/*"
-//        }
-
         binding?.run {
-
             btLoadPhoto.setOnClickListener {
-//                cameraIntent()
-                galleryIntent()
-//                getContent.launch("image/*")
+                intentTest()
             }
-
         }
 
     }
 
-    private fun cameraIntent() {
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-
-        val chooserIntent = Intent.createChooser(intent, "Camera")
-
-        if (chooserIntent.resolveActivity(packageManager) != null) {
-            startActivity(intent)
+    private fun intentTest() {
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE).takeIf {
+            it.resolveActivity(this.packageManager) != null
         }
-    }
 
-    private fun galleryIntent() {
-        val intent = Intent(Intent.ACTION_PICK).apply {
+        val galleryIntent = Intent(Intent.ACTION_PICK).apply {
             type = "image/*"
         }
 
-        val chooserIntent = Intent.createChooser(intent, "Gallery")
-
-        if (chooserIntent.resolveActivity(packageManager) != null) {
-            startActivity(intent)
-        }
+        val chooser = Intent.createChooser(galleryIntent, "Load photo")
+        chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(cameraIntent))
+        getPhoto.launch(chooser)
     }
-
 
 }

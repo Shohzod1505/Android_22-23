@@ -4,15 +4,25 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContract
 
-class PhotoContract : ActivityResultContract<Intent, Bitmap?>() {
+class PhotoContract(private val mContext: Context) : ActivityResultContract<Intent, Bitmap?>() {
     override fun createIntent(context: Context, input: Intent): Intent {
         return input
     }
 
     override fun parseResult(resultCode: Int, intent: Intent?): Bitmap? {
-        return intent.takeIf { resultCode == Activity.RESULT_OK }?.getParcelableExtra("data")
+        return when(intent?.action) {
+            "inline-data" -> {
+                intent.takeIf { resultCode == Activity.RESULT_OK }?.getParcelableExtra("data")
+            }
+            else -> {
+                val imageUri = intent.takeIf { resultCode == Activity.RESULT_OK }?.data
+                MediaStore.Images.Media.getBitmap(mContext.contentResolver, imageUri)
+            }
+        }
+
     }
 }
 

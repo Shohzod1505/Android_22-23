@@ -8,7 +8,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import ru.itis.kpfu.homework.databinding.ActivityMainBinding
 import android.Manifest
 import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RequiresApi
 import com.bumptech.glide.Glide
 import java.util.*
 
@@ -24,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private val getPhoto = registerForActivityResult(PhotoContract()) { image ->
+    private val getPhoto = registerForActivityResult(PhotoContract(this)) { image ->
         binding?.ivPhoto?.let { imageView ->
             Glide.with(this)
                 .load(image)

@@ -41,6 +41,14 @@ class ListFragment : Fragment(R.layout.fragment_list) {
         val bindingFlag = preferences.getBoolean(ITEM_BINDING, true)
 
         binding?.run{
+            lifecycleScope.launch {
+                if ((repository?.getOnlyList() ?: listOf()).isEmpty()){
+                    tvEmpty.text = "Для начала работы добавьте первую цель!"
+                } else {
+                    tvEmpty.visibility = View.GONE
+                }
+            }
+
             swipeRefreshLayout = swipeView
             listAdapter = TodoListAdapter(bindingFlag, {
                 parentFragmentManager.beginTransaction()
@@ -65,10 +73,16 @@ class ListFragment : Fragment(R.layout.fragment_list) {
             }
 
             lifecycleScope.launch {
-                (repository?.getAllTodoLists() ?: listOf()).also {
-                    listAdapter?.submitList(it)
+                repository?.getAllTodoLists()?.observe(viewLifecycleOwner) { todolist ->
+                    listAdapter?.submitList(todolist)
                 }
             }
+
+//            lifecycleScope.launch {
+//                (repository?.getAllTodoLists().also {
+//                    listAdapter?.submitList(it)
+//                }
+//            }
 
             swipeRefreshLayout?.setOnRefreshListener {
                 myUpdateOperation()
@@ -111,11 +125,15 @@ class ListFragment : Fragment(R.layout.fragment_list) {
                         commit()
                     }
                 }
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, EditListFragment())
+                    .replace(R.id.fragment_container, ListFragment())
+                    .commit()
                 true
             }
             R.id.action_delete_all -> {
                 lifecycleScope.launch {
-                    repository?.deleteAll(repository?.getAllTodoLists() ?: listOf())
+                    repository?.deleteAll()
                 }
                 true
             }

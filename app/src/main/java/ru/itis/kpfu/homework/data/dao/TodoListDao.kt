@@ -1,5 +1,6 @@
 package ru.itis.kpfu.homework.data.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import androidx.room.OnConflictStrategy.REPLACE
 import ru.itis.kpfu.homework.data.entity.TodoList
@@ -17,12 +18,15 @@ interface TodoListDao {
     suspend fun delete(todoList: TodoList)
 
     @Query("SELECT * FROM lists ORDER BY id ASC")
-    suspend fun getAll(): List<TodoList>
+    fun getAll(): LiveData<List<TodoList>>
+
+    @Query("SELECT * FROM lists ORDER BY id ASC")
+    suspend fun getOnlyList(): List<TodoList>
 
     @Query("SELECT * FROM lists WHERE id = :id")
     suspend fun findById(id: Int): TodoList
 
-    @Delete
-    suspend fun deleteAll(todoList: List<TodoList>)
+    @Query("DELETE FROM lists")
+    suspend fun deleteAll()
 
 }

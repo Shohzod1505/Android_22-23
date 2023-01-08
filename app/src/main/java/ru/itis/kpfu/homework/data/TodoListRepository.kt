@@ -1,6 +1,7 @@
 package ru.itis.kpfu.homework.data
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 import androidx.room.Room
 import ru.itis.kpfu.homework.data.entity.TodoList
 
@@ -29,13 +30,15 @@ class TodoListRepository(context: Context) {
         todoListDao.delete(todoList)
     }
 
-    suspend fun getAllTodoLists(): List<TodoList> = todoListDao.getAll()
+    fun getAllTodoLists(): LiveData<List<TodoList>> = todoListDao.getAll()
 
     suspend fun findById(id: Int): TodoList = todoListDao.findById(id)
 
-    suspend fun deleteAll(todoList: List<TodoList>) {
-        todoListDao.deleteAll(todoList)
+    suspend fun deleteAll() {
+        todoListDao.deleteAll()
     }
+
+    suspend fun getOnlyList(): List<TodoList> = todoListDao.getOnlyList()
 
     companion object {
         const val DATABASE_NAME = "todo.db"

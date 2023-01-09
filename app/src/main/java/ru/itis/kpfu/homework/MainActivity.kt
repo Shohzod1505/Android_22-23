@@ -1,8 +1,10 @@
 package ru.itis.kpfu.homework
 
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import ru.itis.kpfu.homework.databinding.ActivityMainBinding
+import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
     private var binding: ActivityMainBinding? = null

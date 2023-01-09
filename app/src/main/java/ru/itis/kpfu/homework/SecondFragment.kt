@@ -1,26 +1,21 @@
 package ru.itis.kpfu.homework;
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import ru.itis.kpfu.homework.databinding.FragmentSecondBinding
-import ru.itis.kpfu.homework.Constants.APP_PREFERENCES
-import ru.itis.kpfu.homework.Constants.COUNTER_VALUE
 
 class SecondFragment : Fragment(R.layout.fragment_second) {
     private var binding: FragmentSecondBinding? = null
-    private lateinit var preferences: SharedPreferences
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentSecondBinding.bind(view)
 
-        preferences = requireActivity().getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE)
-
-        val counter = preferences.getInt(COUNTER_VALUE, 0)
+        val counter = arguments?.getInt(ARG_VALUE)
+        Log.d("Debug", counter.toString())
         binding?.tvValue?.text = "Counter value: $counter"
 
         when(counter) {
@@ -31,6 +26,15 @@ class SecondFragment : Fragment(R.layout.fragment_second) {
             }
         }
 
+    }
+
+    companion object {
+        private const val ARG_VALUE ="ARG_VALUE"
+        fun newInstance(value: Int?) = SecondFragment().apply {
+            arguments = Bundle().apply {
+                value?.let { putInt(ARG_VALUE, it) }
+            }
+        }
     }
 
     override fun onDestroyView() {

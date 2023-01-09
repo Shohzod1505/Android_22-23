@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/purple_200"
+    style="@style/Screen"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -15,7 +15,7 @@
         tools:text="Для начала работы добавьте первую цель!"
         android:textSize="18sp"
         android:textAlignment="center"
-        android:textColor="@color/white"
+        android:textColor="#aaa"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,9 +35,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            tools:spanCount="1"
+            tools:spanCount="2"
             tools:listitem="@layout/item_todo_list_linear"
-            tools:itemCount="0"/>
+            tools:itemCount="3"/>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

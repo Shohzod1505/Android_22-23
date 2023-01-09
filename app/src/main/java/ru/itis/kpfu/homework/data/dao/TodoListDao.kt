@@ -17,14 +17,14 @@ interface TodoListDao {
     @Delete
     suspend fun delete(todoList: TodoList)
 
-    @Query("SELECT * FROM lists ORDER BY id ASC")
-    fun getAll(): LiveData<List<TodoList>>
+//    @Query("SELECT * FROM lists ORDER BY id ASC")
+//    fun getAll(): LiveData<List<TodoList>>
 
     @Query("SELECT * FROM lists ORDER BY id ASC")
     suspend fun getOnlyList(): List<TodoList>
 
     @Query("SELECT * FROM lists WHERE id = :id")
-    suspend fun findById(id: Int): TodoList
+    suspend fun findById(id: Int): TodoList?
 
     @Query("DELETE FROM lists")
     suspend fun deleteAll()

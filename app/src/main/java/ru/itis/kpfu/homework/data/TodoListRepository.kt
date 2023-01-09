@@ -30,9 +30,9 @@ class TodoListRepository(context: Context) {
         todoListDao.delete(todoList)
     }
 
-    fun getAllTodoLists(): LiveData<List<TodoList>> = todoListDao.getAll()
+//    fun getAllTodoLists(): LiveData<List<TodoList>> = todoListDao.getAll()
 
-    suspend fun findById(id: Int): TodoList = todoListDao.findById(id)
+    suspend fun findById(id: Int): TodoList? = todoListDao.findById(id)
 
     suspend fun deleteAll() {
         todoListDao.deleteAll()

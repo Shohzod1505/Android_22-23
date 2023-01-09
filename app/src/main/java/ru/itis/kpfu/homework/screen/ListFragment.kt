@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import kotlinx.coroutines.launch
 import ru.itis.kpfu.homework.Constants.APP_PREFERENCES
+import ru.itis.kpfu.homework.Constants.APP_THEME
 import ru.itis.kpfu.homework.Constants.ITEM_BINDING
 import ru.itis.kpfu.homework.R
 import ru.itis.kpfu.homework.adapter.GridSpaceItemDecorator
@@ -22,7 +24,6 @@ import ru.itis.kpfu.homework.adapter.TodoListAdapter
 import ru.itis.kpfu.homework.adapter.LinearSpaceItemDecorator
 import ru.itis.kpfu.homework.databinding.FragmentListBinding
 import ru.itis.kpfu.homework.data.TodoListRepository
-import ru.itis.kpfu.homework.data.entity.TodoList
 
 class ListFragment : Fragment(R.layout.fragment_list) {
     private var binding: FragmentListBinding? = null
@@ -51,13 +52,13 @@ class ListFragment : Fragment(R.layout.fragment_list) {
 
             swipeRefreshLayout = swipeView
             listAdapter = TodoListAdapter(bindingFlag, {
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, EditListFragment.newInstance(it.id,false))
-                    .addToBackStack("ListFragment")
-                    .commit()
+                navigate(it.id, false)
             },{
                 lifecycleScope.launch {
                     repository?.deleteTodoList(it)
+                    repository?.getOnlyList().also {
+                        listAdapter?.submitList(it)
+                    }
                 }
             })
 
@@ -72,30 +73,34 @@ class ListFragment : Fragment(R.layout.fragment_list) {
                 rvTodoList.addItemDecoration(GridSpaceItemDecorator(requireContext(),16f))
             }
 
-            lifecycleScope.launch {
-                repository?.getAllTodoLists()?.observe(viewLifecycleOwner) { todolist ->
-                    listAdapter?.submitList(todolist)
-                }
-            }
-
 //            lifecycleScope.launch {
-//                (repository?.getAllTodoLists().also {
-//                    listAdapter?.submitList(it)
+//                repository?.getAllTodoLists()?.observe(viewLifecycleOwner) { todolist ->
+//                    listAdapter?.submitList(todolist)
 //                }
 //            }
+
+            lifecycleScope.launch {
+                repository?.getOnlyList().also {
+                    listAdapter?.submitList(it)
+                }
+            }
 
             swipeRefreshLayout?.setOnRefreshListener {
                 myUpdateOperation()
             }
 
             fbAdd.setOnClickListener {
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, EditListFragment.newInstance(0, true))
-                    .addToBackStack("ListFragment")
-                    .commit()
+                navigate(0, true)
             }
 
         }
+    }
+
+    private fun navigate(id: Int, action: Boolean) {
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, EditListFragment.newInstance(id, action))
+            .addToBackStack("ListFragment")
+            .commit()
     }
 
     private fun myUpdateOperation() {
@@ -110,6 +115,20 @@ class ListFragment : Fragment(R.layout.fragment_list) {
     override fun onOptionsItemSelected(item: MenuItem) =
         when (item.itemId) {
             R.id.action_theme -> {
+                val themeFlag = preferences.getBoolean(APP_THEME, true)
+                if (themeFlag) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    preferences.edit {
+                        putBoolean(APP_THEME, false)
+                        commit()
+                    }
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    preferences.edit {
+                        putBoolean(APP_THEME, true)
+                        commit()
+                    }
+                }
                 true
             }
             R.id.action_layout -> {
@@ -134,6 +153,9 @@ class ListFragment : Fragment(R.layout.fragment_list) {
             R.id.action_delete_all -> {
                 lifecycleScope.launch {
                     repository?.deleteAll()
+                    repository?.getOnlyList().also {
+                        listAdapter?.submitList(it)
+                    }
                 }
                 true
             }

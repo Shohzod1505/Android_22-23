@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">Homework</string>
+
+    <string name="fragment_first">First Fragment</string>
+    <string name="fragment_second">Second Fragment</string>
+
+    <string name="button_next">Go to Second Fragment</string>
+    <string name="button_counter">Increase value +1</string>
+    <string name="button_dialog">Open Dialog</string>
+
+    <string name="counter_value">Counter value: 0</string>
+
+    <string name="error_negative">*Counter is will be negative</string>
+    <string name="error_empty">*Enter the number</string>
+    <string name="error_data">*Incorrect data</string>
+
 </resources>

@@ -1,9 +1,9 @@
-package ru.itis.kpfu.homework
+package ru.itis.kpfu.homework.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import ru.itis.kpfu.homework.R
 import ru.itis.kpfu.homework.databinding.ActivityMainBinding
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -16,9 +16,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding?.run {
-
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, SearchFragment())
+                .commit()
         }
-
 
     }
 }

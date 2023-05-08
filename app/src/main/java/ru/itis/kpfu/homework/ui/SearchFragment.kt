@@ -23,6 +23,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import ru.itis.kpfu.homework.R
 import ru.itis.kpfu.homework.adapter.SpaceItemDecorator
@@ -35,34 +36,38 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     private var binding: FragmentSearchBinding? = null
     private var adapter: WeatherAdapter? = null
     private val api = DataContainer.weatherApi
-    private var mFusedLocationClient: FusedLocationProviderClient? = null
+//    private var mFusedLocationClient: FusedLocationProviderClient? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentSearchBinding.bind(view)
         setHasOptionsMenu(true)
         binding?.run {
-            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
-            getLastLocation()
+//            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
+//            getLastLocation()
 
             val itemDecoration = SpaceItemDecorator(requireContext(), 16f)
             lifecycleScope.launch {
-                val locationList: List<WeatherResponse> = arrayListOf(
-                    api.getWeather(55.742740,49.1816907),
-                    api.getWeather(55.742740,48.1816907),
-                    api.getWeather(55.742740,47.1816907),
-                    api.getWeather(55.742740,46.1816907),
-                    api.getWeather(55.742740,45.1816907),
-                    api.getWeather(55.742740,44.1816907),
-                    api.getWeather(55.742740,43.1816907),
-                    api.getWeather(55.742740,42.1816907),
-                    api.getWeather(55.742740,41.1816907),
-                    api.getWeather(55.742740,40.1816907),
-                )
-                adapter = WeatherAdapter(locationList)
+                val locationList: List<WeatherResponse> = async {
+                    arrayListOf(
+                        api.getWeather(55.742740,49.1816907),
+                        api.getWeather(55.742740,48.1816907),
+                        api.getWeather(55.742740,47.1816907),
+                        api.getWeather(55.742740,46.1816907),
+                        api.getWeather(55.742740,45.1816907),
+                        api.getWeather(55.742740,44.1816907),
+                        api.getWeather(55.742740,43.1816907),
+                        api.getWeather(55.742740,42.1816907),
+                        api.getWeather(55.742740,41.1816907),
+                        api.getWeather(55.742740,40.1816907),
+                    )
+                }.await()
+                adapter = WeatherAdapter(locationList) {
+                    loadWeather(it.coord?.lat, it.coord?.lon)
+                }
+                rvWeather.adapter = adapter
+                rvWeather.addItemDecoration(itemDecoration)
             }
-            rvWeather.adapter = adapter
-            rvWeather.addItemDecoration(itemDecoration)
         }
     }
 
@@ -148,45 +153,65 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         }
     }
 
+    private fun loadWeather(lat: Double?, lon: Double?) {
+        lifecycleScope.launch {
+            try {
+                showLoading(true)
+                api.getWeather(lat, lon)
+                navigate(lat, lon)
+            } catch (error: Throwable) {
+                showError()
+            } finally {
+                showLoading(false)
+            }
+        }
+    }
+
     private fun navigate(query: String?) {
         parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, DetailFragment.newInstanceQuery(query, false))
+            .replace(R.id.fragment_container, DetailFragment.newInstanceQuery(query, true))
             .addToBackStack("SearchFragment")
             .commit()
     }
 
-    private fun getLastLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf(
-                    Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ),
-                101
-            )
-        }
-
-        val lastLocation = mFusedLocationClient?.lastLocation
-
-        lastLocation?.addOnSuccessListener {
-            if (it != null) {
-                Log.d("My", "Longitude ${it.longitude}")
-                Log.d("My", "Latitude ${it.latitude}")
-            }
-        }
-        lastLocation?.addOnFailureListener {
-            Log.d("My", "Location not found")
-        }
+    private fun navigate(lat: Double?, lon: Double?) {
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, DetailFragment.newInstanceCoord(lat, lon, false))
+            .addToBackStack("SearchFragment")
+            .commit()
     }
+
+//    private fun getLastLocation(){
+//        if (ActivityCompat.checkSelfPermission(
+//                requireContext(),
+//                Manifest.permission.ACCESS_FINE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED
+//            && ActivityCompat.checkSelfPermission(
+//                requireContext(),
+//                Manifest.permission.ACCESS_COARSE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED
+//        ) {
+//            ActivityCompat.requestPermissions(
+//                requireActivity(),
+//                arrayOf(
+//                    Manifest.permission.ACCESS_FINE_LOCATION,
+//                    Manifest.permission.ACCESS_COARSE_LOCATION
+//                ),
+//                101
+//            )
+//        }
+//
+//        mFusedLocationClient?.lastLocation?.addOnSuccessListener { location ->
+//            if (location != null) {
+//                val latitude = location.latitude
+//                val longitude = location.longitude
+//                Log.d("My", "Latitude $latitude")
+//                Log.d("My", "Longitude $longitude")
+//            }
+//        }?.addOnFailureListener {
+//            Log.d("My", "Location not found")
+//        }
+//    }
 
     private fun showLoading(isShow: Boolean) {
         binding?.progress?.isVisible = isShow

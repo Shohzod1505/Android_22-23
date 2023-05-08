@@ -8,6 +8,7 @@ import ru.itis.kpfu.homework.databinding.ItemWeatherBinding
 
 class WeatherAdapter(
     private val list: List<WeatherResponse>,
+    private val action: (WeatherResponse) -> Unit,
 ) : RecyclerView.Adapter<WeatherHolder>() {
 
     override fun onCreateViewHolder(
@@ -18,7 +19,8 @@ class WeatherAdapter(
             LayoutInflater.from(parent.context),
             parent,
             false
-        )
+        ),
+        action = action
     )
 
     override fun onBindViewHolder(

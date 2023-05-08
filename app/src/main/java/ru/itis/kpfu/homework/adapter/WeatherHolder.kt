@@ -7,6 +7,7 @@ import ru.itis.kpfu.homework.ui.WeatherUi
 
 class WeatherHolder(
     private val binding: ItemWeatherBinding,
+    private val action: (WeatherResponse) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
 
     private val weatherUi = WeatherUi()
@@ -19,6 +20,10 @@ class WeatherHolder(
             weatherUi.showTemp(tvCityTemp, temp)
             weatherResponse.weather.firstOrNull()?.also {
                 weatherUi.showWeatherIcon(ivWeatherIcon, it.icon)
+            }
+
+            root.setOnClickListener { 
+                action(weatherResponse)
             }
         }
     }

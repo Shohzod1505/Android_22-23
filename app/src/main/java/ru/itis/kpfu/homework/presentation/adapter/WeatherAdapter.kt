@@ -1,14 +1,14 @@
-package ru.itis.kpfu.homework.adapter
+package ru.itis.kpfu.homework.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import ru.itis.kpfu.homework.data.response.WeatherResponse
 import ru.itis.kpfu.homework.databinding.ItemWeatherBinding
+import ru.itis.kpfu.homework.domain.weather.WeatherInfo
 
 class WeatherAdapter(
-    private val list: List<WeatherResponse>,
-    private val action: (WeatherResponse) -> Unit,
+    private val list: List<WeatherInfo>,
+    private val action: (WeatherInfo) -> Unit,
 ) : RecyclerView.Adapter<WeatherHolder>() {
 
     override fun onCreateViewHolder(

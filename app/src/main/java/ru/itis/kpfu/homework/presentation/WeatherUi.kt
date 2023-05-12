@@ -1,4 +1,4 @@
-package ru.itis.kpfu.homework.ui
+package ru.itis.kpfu.homework.presentation
 
 import android.graphics.Color
 import android.widget.ImageView
@@ -8,7 +8,7 @@ import ru.itis.kpfu.homework.R
 
 class WeatherUi {
 
-    fun showWeatherIcon(image: ImageView?, id: String) {
+    fun showWeatherIcon(image: ImageView?, id: String?) {
         image?.load("https://openweathermap.org/img/w/$id.png")
     }
 

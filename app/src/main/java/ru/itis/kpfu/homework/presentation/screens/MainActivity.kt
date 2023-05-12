@@ -1,9 +1,10 @@
-package ru.itis.kpfu.homework.ui
+package ru.itis.kpfu.homework.presentation.screens
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import ru.itis.kpfu.homework.R
 import ru.itis.kpfu.homework.databinding.ActivityMainBinding
+import ru.itis.kpfu.homework.utils.hideKeyboard
 
 class MainActivity : AppCompatActivity() {
 

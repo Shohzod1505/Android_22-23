@@ -1,8 +1,8 @@
-package ru.itis.kpfu.homework.data
+package ru.itis.kpfu.homework.data.weather.datasource.remote
 
 import retrofit2.http.GET
 import retrofit2.http.Query
-import ru.itis.kpfu.homework.data.response.WeatherResponse
+import ru.itis.kpfu.homework.data.weather.datasource.remote.response.WeatherResponse
 
 interface WeatherApi {
 

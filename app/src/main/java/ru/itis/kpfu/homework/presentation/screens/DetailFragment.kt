@@ -1,18 +1,21 @@
-package ru.itis.kpfu.homework.ui;
+package ru.itis.kpfu.homework.presentation.screens;
 
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import ru.itis.kpfu.homework.R
-import ru.itis.kpfu.homework.data.DataContainer
+import ru.itis.kpfu.homework.di.DataContainer
 import ru.itis.kpfu.homework.databinding.FragmentDetailBinding
+import ru.itis.kpfu.homework.domain.weather.GetWeatherByCoordUseCase
+import ru.itis.kpfu.homework.domain.weather.GetWeatherByNameUseCase
+import ru.itis.kpfu.homework.presentation.WeatherUi
 
 class DetailFragment : Fragment(R.layout.fragment_detail) {
     private var binding: FragmentDetailBinding? = null
-    private val api = DataContainer.weatherApi
+    private val getWeatherByNameUseCase: GetWeatherByNameUseCase = DataContainer.weatherByNameUseCase
+    private val getWeatherByCoordUseCase: GetWeatherByCoordUseCase = DataContainer.weatherByCoordUseCase
     private val weatherUi = WeatherUi()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -45,37 +48,33 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
 
     private fun loadWeather(query: String?) {
         lifecycleScope.launch {
-            api.getWeather(query).also {
-                showTemp(it.main.temp)
-                it.weather.firstOrNull()?.also {
-                    showWeatherIcon(it.icon)
-                }
-                showHumidity(it.main.humidity)
-                showHumidityIcon(it.main.humidity)
-                showWindDirection(it.wind.deg)
-                showWindDirectionIcon(it.wind.deg)
+            getWeatherByNameUseCase(query).also {
+                showTemp(it.temperature)
+                showWeatherIcon(it.icon)
+                showHumidity(it.humidity)
+                showHumidityIcon(it.humidity)
+                showWindDirection(it.windDegree)
+                showWindDirectionIcon(it.windDegree)
             }
         }
     }
 
     private fun loadWeather(lat: Double?, lon: Double?) {
         lifecycleScope.launch {
-            api.getWeather(lat, lon).also {
+            getWeatherByCoordUseCase(lat, lon).also {
                 binding?.tvCityName?.text = it.name
-                showTemp(it.main.temp)
-                it.weather.firstOrNull()?.also {
-                    showWeatherIcon(it.icon)
-                }
-                showHumidity(it.main.humidity)
-                showHumidityIcon(it.main.humidity)
-                showWindDirection(it.wind.deg)
-                showWindDirectionIcon(it.wind.deg)
+                showTemp(it.temperature)
+                showWeatherIcon(it.icon)
+                showHumidity(it.humidity)
+                showHumidityIcon(it.humidity)
+                showWindDirection(it.windDegree)
+                showWindDirectionIcon(it.windDegree)
             }
         }
     }
 
 
-    private fun showWeatherIcon(id: String) {
+    private fun showWeatherIcon(id: String?) {
         weatherUi.showWeatherIcon(binding?.ivWeatherIcon, id)
     }
 

@@ -7,35 +7,27 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView as KotlinSearchView
-import ru.itis.kpfu.homework.presentation.moxy.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import moxy.MvpAppCompatFragment
-import moxy.ktx.moxyPresenter
 import ru.itis.kpfu.homework.R
 import ru.itis.kpfu.homework.data.weather.datasource.local.WeatherRepository
 import ru.itis.kpfu.homework.data.weather.mapper.toWeather
 import ru.itis.kpfu.homework.presentation.adapter.SpaceItemDecorator
 import ru.itis.kpfu.homework.presentation.adapter.WeatherAdapter
-import ru.itis.kpfu.homework.di.DataContainer
 import ru.itis.kpfu.homework.databinding.FragmentSearchBinding
-import ru.itis.kpfu.homework.domain.weather.GetWeatherByCoordUseCase
-import ru.itis.kpfu.homework.domain.weather.GetWeatherByNameUseCase
 import ru.itis.kpfu.homework.domain.weather.WeatherInfo
-import ru.itis.kpfu.homework.presentation.moxy.SearchPresenter
+import ru.itis.kpfu.homework.presentation.mvvm.SearchViewModel
 
-class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search), SearchView {
+class SearchFragment : Fragment(R.layout.fragment_search) {
     private var binding: FragmentSearchBinding? = null
     private var adapter: WeatherAdapter? = null
     private var repositoryRoom: WeatherRepository? = null
-    private val presenter: SearchPresenter by moxyPresenter {
-        SearchPresenter(
-            getWeatherByNameUseCase = DataContainer.weatherByNameUseCase,
-            getWeatherByCoordUseCase = DataContainer.weatherByCoordUseCase,
-        )
+    private val viewModel: SearchViewModel by viewModels {
+        SearchViewModel.Factory
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -43,28 +35,30 @@ class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search), SearchVie
 
         binding = FragmentSearchBinding.bind(view)
         setHasOptionsMenu(true)
+        observeViewModel()
+
         binding?.run {
             repositoryRoom = WeatherRepository(requireContext())
             val itemDecoration = SpaceItemDecorator(requireContext(), 16f)
             lifecycleScope.launch {
                 val locationList: List<WeatherInfo?> = async {
                     arrayListOf(
-                        presenter.getWeatherByCoord(55.742740,49.1816907),
-                        presenter.getWeatherByCoord(55.742740,48.1816907),
-                        presenter.getWeatherByCoord(55.742740,47.1816907),
-                        presenter.getWeatherByCoord(55.742740,46.1816907),
-                        presenter.getWeatherByCoord(55.742740,45.1816907),
-                        presenter.getWeatherByCoord(55.742740,44.1816907),
-                        presenter.getWeatherByCoord(55.742740,43.1816907),
-                        presenter.getWeatherByCoord(55.742740,42.1816907),
-                        presenter.getWeatherByCoord(55.742740,41.1816907),
-                        presenter.getWeatherByCoord(55.742740,40.1816907),
+                        viewModel.getWeatherByCoord(55.742740,49.1816907),
+                        viewModel.getWeatherByCoord(55.742740,48.1816907),
+                        viewModel.getWeatherByCoord(55.742740,47.1816907),
+                        viewModel.getWeatherByCoord(55.742740,46.1816907),
+                        viewModel.getWeatherByCoord(55.742740,45.1816907),
+                        viewModel.getWeatherByCoord(55.742740,44.1816907),
+                        viewModel.getWeatherByCoord(55.742740,43.1816907),
+                        viewModel.getWeatherByCoord(55.742740,42.1816907),
+                        viewModel.getWeatherByCoord(55.742740,41.1816907),
+                        viewModel.getWeatherByCoord(55.742740,40.1816907),
                     )
                 }.await()
                 adapter = WeatherAdapter(locationList) {
                     lifecycleScope.launch {
-                        presenter.loadWeather(it?.lat, it?.lon)
-                        presenter.getWeatherByCoord(it?.lat, it?.lon).let {
+                        viewModel.loadWeather(it?.lat, it?.lon)
+                        viewModel.getWeatherByCoord(it?.lat, it?.lon).let {
                                 repositoryRoom?.saveWeather(it.toWeather())
                             }
                     }
@@ -91,9 +85,9 @@ class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search), SearchVie
                         searchView.clearFocus()
                         searchView.setQuery("", false)
                         item.collapseActionView()
-                        presenter.loadWeather(query)
+                        viewModel.loadWeather(query)
                         lifecycleScope.launch {
-                            presenter.getWeatherByName(query).let {
+                            viewModel.getWeatherByName(query).let {
                                 repositoryRoom?.saveWeather(it.toWeather())
                             }
                         }
@@ -110,26 +104,48 @@ class SearchFragment : MvpAppCompatFragment(R.layout.fragment_search), SearchVie
             }
         }
 
-    override fun navigate(query: String?) {
+    private fun observeViewModel() {
+        with(viewModel) {
+            loading.observe(viewLifecycleOwner) {
+                binding?.progress?.isVisible = it
+            }
+
+            error.observe(viewLifecycleOwner) {
+                showError(it)
+            }
+
+            weatherInfo.observe(viewLifecycleOwner) {
+                if (it == null) return@observe
+            }
+
+            navigationName.observe(viewLifecycleOwner) {
+                if (it == null) return@observe
+                navigate(it)
+            }
+
+            navigationCoord.observe(viewLifecycleOwner) {
+                if (it == null) return@observe
+                navigate(it[0], it[1])
+            }
+        }
+    }
+
+    private fun navigate(query: String?) {
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, DetailFragment.newInstanceQuery(query, true))
             .addToBackStack("SearchFragment")
             .commit()
     }
 
-    override fun navigate(lat: Double?, lon: Double?) {
+    private fun navigate(lat: Double?, lon: Double?) {
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, DetailFragment.newInstanceCoord(lat, lon, false))
             .addToBackStack("SearchFragment")
             .commit()
     }
 
-    override fun showLoading(isShow: Boolean) {
-        binding?.progress?.isVisible = isShow
-    }
-
-    override fun showError() {
-        Toast.makeText(requireContext(), "City not found", Toast.LENGTH_SHORT).show()
+    private fun showError(error: String) {
+        Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {

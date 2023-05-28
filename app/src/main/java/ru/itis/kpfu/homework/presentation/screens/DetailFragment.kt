@@ -86,7 +86,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
         weatherUi.showWindDirectionIcon(binding?.ivDirectionIcon, degree)
     }
 
-    private fun showTemp(temp: Double) {
+    private fun showTemp(temp: Double?) {
         weatherUi.showTemp(binding?.tvCityTemp, temp)
     }
 

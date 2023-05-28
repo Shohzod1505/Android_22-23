@@ -7,7 +7,7 @@ import ru.itis.kpfu.homework.data.weather.datasource.local.entity.Weather
 class WeatherRepository(private val context: Context) {
 
     private val db by lazy {
-        Room.databaseBuilder(context, AppDataBase::class.java, DATABASE_NAME)
+        Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
             .build()
     }
 

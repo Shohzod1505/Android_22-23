@@ -6,6 +6,6 @@ import ru.itis.kpfu.homework.data.weather.datasource.local.dao.WeatherDao
 import ru.itis.kpfu.homework.data.weather.datasource.local.entity.Weather
 
 @Database(entities = [Weather::class], version = 1)
-abstract class AppDataBase: RoomDatabase() {
+abstract class AppDatabase: RoomDatabase() {
     abstract fun getWeatherDao(): WeatherDao
 }

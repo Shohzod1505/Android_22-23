@@ -1,7 +1,5 @@
 package ru.itis.kpfu.homework.data
 
-import android.content.Context
-import androidx.room.Room
 import ru.itis.kpfu.homework.data.weather.datasource.remote.WeatherApi
 import ru.itis.kpfu.homework.data.weather.mapper.toWeatherInfo
 import ru.itis.kpfu.homework.domain.weather.WeatherInfo

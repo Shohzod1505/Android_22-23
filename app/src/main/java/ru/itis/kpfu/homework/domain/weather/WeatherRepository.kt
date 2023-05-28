@@ -6,5 +6,4 @@ interface WeatherRepository {
 
     suspend fun getWeatherByCoord(lat: Double?, lon: Double?): WeatherInfo
 
-
 }

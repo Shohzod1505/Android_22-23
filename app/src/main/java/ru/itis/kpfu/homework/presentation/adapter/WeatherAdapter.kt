@@ -7,8 +7,8 @@ import ru.itis.kpfu.homework.databinding.ItemWeatherBinding
 import ru.itis.kpfu.homework.domain.weather.WeatherInfo
 
 class WeatherAdapter(
-    private val list: List<WeatherInfo>,
-    private val action: (WeatherInfo) -> Unit,
+    private val list: List<WeatherInfo?>,
+    private val action: (WeatherInfo?) -> Unit,
 ) : RecyclerView.Adapter<WeatherHolder>() {
 
     override fun onCreateViewHolder(

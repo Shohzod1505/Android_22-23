@@ -40,9 +40,10 @@ class WeatherUi {
         }
     }
 
-    fun showTemp(view: TextView?, temp: Double) {
+    fun showTemp(view: TextView?, temp: Double?) {
         view?.run {
             text = "$temp C"
+            if(temp != null)
             when(temp) {
                 in -40.0..-5.0 -> setTextColor(Color.BLUE)
                 in -5.0..15.0 -> setTextColor(Color.CYAN)

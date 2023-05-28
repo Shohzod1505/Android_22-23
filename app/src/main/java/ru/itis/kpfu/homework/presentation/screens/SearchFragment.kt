@@ -1,13 +1,13 @@
 package ru.itis.kpfu.homework.presentation.screens;
 
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.SearchView as KotlinSearchView
+import ru.itis.kpfu.homework.presentation.mvp.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -20,43 +20,46 @@ import ru.itis.kpfu.homework.presentation.adapter.SpaceItemDecorator
 import ru.itis.kpfu.homework.presentation.adapter.WeatherAdapter
 import ru.itis.kpfu.homework.di.DataContainer
 import ru.itis.kpfu.homework.databinding.FragmentSearchBinding
-import ru.itis.kpfu.homework.domain.weather.GetWeatherByCoordUseCase
-import ru.itis.kpfu.homework.domain.weather.GetWeatherByNameUseCase
 import ru.itis.kpfu.homework.domain.weather.WeatherInfo
+import ru.itis.kpfu.homework.presentation.mvp.SearchPresenter
 
-class SearchFragment : Fragment(R.layout.fragment_search) {
+class SearchFragment : Fragment(R.layout.fragment_search), SearchView {
     private var binding: FragmentSearchBinding? = null
     private var adapter: WeatherAdapter? = null
     private var repositoryRoom: WeatherRepository? = null
-    private val getWeatherByNameUseCase: GetWeatherByNameUseCase = DataContainer.weatherByNameUseCase
-    private val getWeatherByCoordUseCase: GetWeatherByCoordUseCase = DataContainer.weatherByCoordUseCase
+    private var presenter: SearchPresenter? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        initPresenter()
+
         binding = FragmentSearchBinding.bind(view)
         setHasOptionsMenu(true)
         binding?.run {
             repositoryRoom = WeatherRepository(requireContext())
             val itemDecoration = SpaceItemDecorator(requireContext(), 16f)
             lifecycleScope.launch {
-                val locationList: List<WeatherInfo> = async {
+                val locationList: List<WeatherInfo?> = async {
                     arrayListOf(
-                        getWeatherByCoordUseCase(55.742740,49.1816907),
-                        getWeatherByCoordUseCase(55.742740,48.1816907),
-                        getWeatherByCoordUseCase(55.742740,47.1816907),
-                        getWeatherByCoordUseCase(55.742740,46.1816907),
-                        getWeatherByCoordUseCase(55.742740,45.1816907),
-                        getWeatherByCoordUseCase(55.742740,44.1816907),
-                        getWeatherByCoordUseCase(55.742740,43.1816907),
-                        getWeatherByCoordUseCase(55.742740,42.1816907),
-                        getWeatherByCoordUseCase(55.742740,41.1816907),
-                        getWeatherByCoordUseCase(55.742740,40.1816907),
+                        presenter?.getWeatherByCoord(55.742740,49.1816907),
+                        presenter?.getWeatherByCoord(55.742740,48.1816907),
+                        presenter?.getWeatherByCoord(55.742740,47.1816907),
+                        presenter?.getWeatherByCoord(55.742740,46.1816907),
+                        presenter?.getWeatherByCoord(55.742740,45.1816907),
+                        presenter?.getWeatherByCoord(55.742740,44.1816907),
+                        presenter?.getWeatherByCoord(55.742740,43.1816907),
+                        presenter?.getWeatherByCoord(55.742740,42.1816907),
+                        presenter?.getWeatherByCoord(55.742740,41.1816907),
+                        presenter?.getWeatherByCoord(55.742740,40.1816907),
                     )
                 }.await()
                 adapter = WeatherAdapter(locationList) {
                     lifecycleScope.launch {
-                        loadWeather(it.lat, it.lon)
-                        repositoryRoom?.saveWeather(getWeatherByCoordUseCase(it.lat, it.lon).toWeather())
+                        presenter?.loadWeather(it?.lat, it?.lon)
+                        presenter?.getWeatherByCoord(it?.lat, it?.lon)?.let {
+                                repositoryRoom?.saveWeather(it.toWeather())
+                            }
                     }
                 }
                 rvWeather.adapter = adapter
@@ -73,17 +76,19 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     override fun onOptionsItemSelected(item: MenuItem) =
         when(item.itemId) {
             R.id.action_search -> {
-                val searchView = item.actionView as SearchView
+                val searchView = item.actionView as KotlinSearchView
                 searchView.queryHint = "Search"
 
-                searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                searchView.setOnQueryTextListener(object : KotlinSearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String?): Boolean {
                         searchView.clearFocus()
                         searchView.setQuery("", false)
                         item.collapseActionView()
-                        loadWeather(query)
+                        presenter?.loadWeather(query)
                         lifecycleScope.launch {
-                            repositoryRoom?.saveWeather(getWeatherByNameUseCase(query).toWeather())
+                            presenter?.getWeatherByName(query)?.let {
+                                repositoryRoom?.saveWeather(it.toWeather())
+                            }
                         }
                         return true
                     }
@@ -98,58 +103,39 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             }
         }
 
-    private fun loadWeather(query: String?) {
-        lifecycleScope.launch {
-            try {
-                showLoading(true)
-                getWeatherByNameUseCase(query)
-                navigate(query)
-            } catch (error: Throwable) {
-                showError()
-            } finally {
-                showLoading(false)
-            }
-        }
-    }
-
-    private fun loadWeather(lat: Double?, lon: Double?) {
-        lifecycleScope.launch {
-            try {
-                showLoading(true)
-                getWeatherByCoordUseCase(lat, lon)
-                navigate(lat, lon)
-            } catch (error: Throwable) {
-                showError()
-            } finally {
-                showLoading(false)
-            }
-        }
-    }
-
-    private fun navigate(query: String?) {
+    override fun navigate(query: String?) {
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, DetailFragment.newInstanceQuery(query, true))
             .addToBackStack("SearchFragment")
             .commit()
     }
 
-    private fun navigate(lat: Double?, lon: Double?) {
+    override fun navigate(lat: Double?, lon: Double?) {
         parentFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, DetailFragment.newInstanceCoord(lat, lon, false))
             .addToBackStack("SearchFragment")
             .commit()
     }
 
-    private fun showLoading(isShow: Boolean) {
+    override fun showLoading(isShow: Boolean) {
         binding?.progress?.isVisible = isShow
     }
 
-    private fun showError() {
+    override fun showError() {
         Toast.makeText(requireContext(), "City not found", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun initPresenter() {
+        presenter = SearchPresenter(
+            view = this,
+            getWeatherByNameUseCase = DataContainer.weatherByNameUseCase,
+            getWeatherByCoordUseCase = DataContainer.weatherByCoordUseCase,
+        )
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        presenter?.onClear()
         binding = null
     }
 

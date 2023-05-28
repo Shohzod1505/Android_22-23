@@ -66,9 +66,15 @@ dependencies {
     implementation "androidx.room:room-ktx:$room"
     kapt "androidx.room:room-compiler:$room"
     /* =======================================MVVM=============================================== */
-    def lifecycle_version = "2.6.1"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    def lifecycle = "2.6.1"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle"
+    /* =======================================MOXY=============================================== */
+    def moxy = "2.2.2"
+    implementation "com.github.moxy-community:moxy:$moxy"
+    implementation "com.github.moxy-community:moxy-androidx:$moxy"
+    implementation "com.github.moxy-community:moxy-ktx:$moxy"
+    kapt "com.github.moxy-community:moxy-compiler:$moxy"
     /* =======================================Utils============================================== */
     implementation 'com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0'

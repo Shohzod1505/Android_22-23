@@ -1,31 +1,34 @@
-package ru.itis.kpfu.homework.presentation.mvp
+package ru.itis.kpfu.homework.presentation.moxy
 
 import kotlinx.coroutines.*
+import moxy.MvpPresenter
+import moxy.presenterScope
 import ru.itis.kpfu.homework.domain.weather.GetWeatherByCoordUseCase
 import ru.itis.kpfu.homework.domain.weather.GetWeatherByNameUseCase
 
 class SearchPresenter(
-    private val view: SearchView,
     private val getWeatherByNameUseCase: GetWeatherByNameUseCase,
     private val getWeatherByCoordUseCase: GetWeatherByCoordUseCase,
-) {
+) : MvpPresenter<SearchView>() {
 
-    private val presenterScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    override fun onFirstViewAttach() {
+        super.onFirstViewAttach()
+    }
 
-    fun onClear() {
-        presenterScope.cancel()
+    override fun onDestroy() {
+        super.onDestroy()
     }
 
     fun loadWeather(query: String?) {
         presenterScope.launch {
             try {
-                view.showLoading(true)
+                viewState.showLoading(true)
                 getWeatherByNameUseCase(query)
-                view.navigate(query)
+                viewState.navigate(query)
             } catch (error: Throwable) {
-                view. showError()
+                viewState. showError()
             } finally {
-                view. showLoading(false)
+                viewState. showLoading(false)
             }
         }
     }
@@ -33,13 +36,13 @@ class SearchPresenter(
     fun loadWeather(lat: Double?, lon: Double?) {
         presenterScope.launch {
             try {
-                view.showLoading(true)
+                viewState.showLoading(true)
                 getWeatherByCoordUseCase(lat, lon)
-                view.navigate(lat, lon)
+                viewState.navigate(lat, lon)
             } catch (error: Throwable) {
-                view. showError()
+                viewState. showError()
             } finally {
-                view.showLoading(false)
+                viewState.showLoading(false)
             }
         }
     }

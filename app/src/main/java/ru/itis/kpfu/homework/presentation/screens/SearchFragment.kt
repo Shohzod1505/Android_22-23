@@ -114,10 +114,6 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                 showError(it)
             }
 
-            weatherInfo.observe(viewLifecycleOwner) {
-                if (it == null) return@observe
-            }
-
             navigationName.observe(viewLifecycleOwner) {
                 if (it == null) return@observe
                 navigate(it)

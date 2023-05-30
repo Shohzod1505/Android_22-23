@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Homework</string>
 
+    <string name="error">City not found</string>
+
     <!-- Detail labels -->
     <string name="label_temp">Temperature:</string>
     <string name="label_humidity">Humidity:</string>

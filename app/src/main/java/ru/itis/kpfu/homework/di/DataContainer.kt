@@ -1,5 +1,6 @@
 package ru.itis.kpfu.homework.di
 
+import android.content.Context
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -51,5 +52,9 @@ object DataContainer {
 
     val weatherByCoordUseCase: GetWeatherByCoordUseCase
         get() = GetWeatherByCoordUseCase(weatherRepository)
+
+    fun provideResources(
+        applicationContext: Context
+    ): ResourceProvider = ResourceProviderImpl(applicationContext)
 
 }

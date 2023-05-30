@@ -20,7 +20,7 @@ import ru.itis.kpfu.homework.presentation.adapter.SpaceItemDecorator
 import ru.itis.kpfu.homework.presentation.adapter.WeatherAdapter
 import ru.itis.kpfu.homework.databinding.FragmentSearchBinding
 import ru.itis.kpfu.homework.domain.weather.WeatherInfo
-import ru.itis.kpfu.homework.presentation.mvvm.SearchViewModel
+import ru.itis.kpfu.homework.presentation.viewmodel.SearchViewModel
 
 class SearchFragment : Fragment(R.layout.fragment_search) {
     private var binding: FragmentSearchBinding? = null

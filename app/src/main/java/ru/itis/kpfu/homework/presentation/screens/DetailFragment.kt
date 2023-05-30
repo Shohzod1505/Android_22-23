@@ -7,7 +7,7 @@ import androidx.fragment.app.viewModels
 import ru.itis.kpfu.homework.R
 import ru.itis.kpfu.homework.databinding.FragmentDetailBinding
 import ru.itis.kpfu.homework.presentation.WeatherUi
-import ru.itis.kpfu.homework.presentation.mvvm.DetailViewModel
+import ru.itis.kpfu.homework.presentation.viewmodel.DetailViewModel
 
 class DetailFragment : Fragment(R.layout.fragment_detail) {
     private var binding: FragmentDetailBinding? = null

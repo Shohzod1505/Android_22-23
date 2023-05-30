@@ -1,4 +1,4 @@
-package ru.itis.kpfu.homework.presentation.mvvm
+package ru.itis.kpfu.homework.presentation.viewmodel
 
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.CreationExtras
@@ -13,7 +13,12 @@ import ru.itis.kpfu.homework.domain.weather.WeatherInfo
 class DetailViewModel(
     private val getWeatherByNameUseCase: GetWeatherByNameUseCase,
     private val getWeatherByCoordUseCase: GetWeatherByCoordUseCase,
+    private val savedState: SavedStateHandle,
 ): ViewModel() {
+
+    init {
+        savedState.getLiveData<String>("query")
+    }
 
     private val _weatherInfo = MutableLiveData<WeatherInfo?>(null)
     val weatherInfo: LiveData<WeatherInfo?>
@@ -47,8 +52,8 @@ class DetailViewModel(
             ): T {
                 val weatherByNameUseCase = DataContainer.weatherByNameUseCase
                 val weatherByCoordUseCase = DataContainer.weatherByCoordUseCase
-                // val savedStateHandle = extras.createSavedStateHandle()
-                return DetailViewModel(weatherByNameUseCase, weatherByCoordUseCase) as T
+                 val savedStateHandle = extras.createSavedStateHandle()
+                return DetailViewModel(weatherByNameUseCase, weatherByCoordUseCase, savedStateHandle) as T
             }
         }
 
@@ -56,8 +61,8 @@ class DetailViewModel(
             initializer {
                 val weatherByNameUseCase = DataContainer.weatherByNameUseCase
                 val weatherByCoordUseCase = DataContainer.weatherByCoordUseCase
-                // val savedStateHandle = extras.createSavedStateHandle()
-                DetailViewModel(weatherByNameUseCase, weatherByCoordUseCase)
+                 val savedStateHandle = createSavedStateHandle()
+                DetailViewModel(weatherByNameUseCase, weatherByCoordUseCase, savedStateHandle)
             }
         }
 

@@ -1,18 +1,20 @@
-package ru.itis.kpfu.homework.presentation.mvvm
+package ru.itis.kpfu.homework.presentation.viewmodel
 
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.launch
+import ru.itis.kpfu.homework.di.ResourceProvider
 import ru.itis.kpfu.homework.di.DataContainer
 import ru.itis.kpfu.homework.domain.weather.GetWeatherByCoordUseCase
 import ru.itis.kpfu.homework.domain.weather.GetWeatherByNameUseCase
-import ru.itis.kpfu.homework.domain.weather.WeatherInfo
 
 class SearchViewModel(
     private val getWeatherByNameUseCase: GetWeatherByNameUseCase,
     private val getWeatherByCoordUseCase: GetWeatherByCoordUseCase,
+    private val savedState: SavedStateHandle,
+//    private val resourceProvider: ResourceProvider,
 ): ViewModel() {
 
     private val _loading = MutableLiveData<Boolean>(false)
@@ -34,7 +36,7 @@ class SearchViewModel(
                 getWeatherByNameUseCase(query)
                 navigationName.value = query
             } catch (error: Throwable) {
-                _error.value = "City not found"
+                _error.value = "City not found!"
             } finally {
                 _loading.value = false
             }
@@ -49,7 +51,7 @@ class SearchViewModel(
                 if (lat != null && lon != null)
                     navigationCoord.value = doubleArrayOf(lat, lon)
             } catch (error: Throwable) {
-                _error.value = "City not found"
+                _error.value = "City not found!"
             } finally {
                 _loading.value = false
             }
@@ -59,10 +61,6 @@ class SearchViewModel(
     suspend fun getWeatherByName(query: String?) = getWeatherByNameUseCase(query)
 
     suspend fun getWeatherByCoord(lat: Double?, lon: Double?) = getWeatherByCoordUseCase(lat, lon)
-
-    override fun onCleared() {
-        super.onCleared()
-    }
 
     companion object {
 
@@ -74,8 +72,14 @@ class SearchViewModel(
             ): T {
                 val weatherByNameUseCase = DataContainer.weatherByNameUseCase
                 val weatherByCoordUseCase = DataContainer.weatherByCoordUseCase
-                // val savedStateHandle = extras.createSavedStateHandle()
-                return SearchViewModel(weatherByNameUseCase, weatherByCoordUseCase) as T
+//                val resourceProvider = DataContainer.provideResources()
+                val savedStateHandle = extras.createSavedStateHandle()
+                return SearchViewModel(
+                    weatherByNameUseCase,
+                    weatherByCoordUseCase,
+                    savedStateHandle,
+//                    resourceProvider
+                ) as T
             }
         }
 
@@ -83,8 +87,14 @@ class SearchViewModel(
             initializer {
                 val weatherByNameUseCase = DataContainer.weatherByNameUseCase
                 val weatherByCoordUseCase = DataContainer.weatherByCoordUseCase
-                // val savedStateHandle = extras.createSavedStateHandle()
-                SearchViewModel(weatherByNameUseCase, weatherByCoordUseCase)
+//                val resourceProvider = DataContainer.provideResources()
+                val savedStateHandle = createSavedStateHandle()
+                SearchViewModel(
+                    weatherByNameUseCase,
+                    weatherByCoordUseCase,
+                    savedStateHandle,
+//                    resourceProvider
+                )
             }
         }
 

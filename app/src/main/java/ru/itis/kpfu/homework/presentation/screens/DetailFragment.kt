@@ -1,23 +1,26 @@
-package ru.itis.kpfu.homework.ui;
+package ru.itis.kpfu.homework.presentation.screens;
 
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
+import androidx.fragment.app.viewModels
 import ru.itis.kpfu.homework.R
-import ru.itis.kpfu.homework.data.DataContainer
 import ru.itis.kpfu.homework.databinding.FragmentDetailBinding
+import ru.itis.kpfu.homework.presentation.WeatherUi
+import ru.itis.kpfu.homework.presentation.viewmodel.DetailViewModel
 
 class DetailFragment : Fragment(R.layout.fragment_detail) {
     private var binding: FragmentDetailBinding? = null
-    private val api = DataContainer.weatherApi
     private val weatherUi = WeatherUi()
+    private val viewModel: DetailViewModel by viewModels {
+        DetailViewModel.Factory
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentDetailBinding.bind(view)
+
+        observeViewModel()
 
         binding?.run {
             val query = arguments?.getString(ARG_QUERY)
@@ -26,56 +29,47 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
             val flag = arguments?.getBoolean(ARG_FLAG)
 
             if (flag == true) {
-                loadWeather(query)
-                tvCityName.text = query
+                viewModel.loadWeather(query)
             } else {
-                loadWeather(lat, lon)
+                viewModel.loadWeather(lat, lon)
             }
 
             btBack.setOnClickListener {
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, SearchFragment())
-                    .addToBackStack("DetailFragment")
-                    .commit()
-            }
-
-        }
-
-    }
-
-    private fun loadWeather(query: String?) {
-        lifecycleScope.launch {
-            api.getWeather(query).also {
-                showTemp(it.main.temp)
-                it.weather.firstOrNull()?.also {
-                    showWeatherIcon(it.icon)
-                }
-                showHumidity(it.main.humidity)
-                showHumidityIcon(it.main.humidity)
-                showWindDirection(it.wind.deg)
-                showWindDirectionIcon(it.wind.deg)
+                navigate()
             }
         }
     }
 
-    private fun loadWeather(lat: Double?, lon: Double?) {
-        lifecycleScope.launch {
-            api.getWeather(lat, lon).also {
+    private fun observeViewModel() {
+        with(viewModel) {
+            weatherInfo.observe(viewLifecycleOwner) {
+                if (it == null) return@observe
                 binding?.tvCityName?.text = it.name
-                showTemp(it.main.temp)
-                it.weather.firstOrNull()?.also {
-                    showWeatherIcon(it.icon)
+                showTemp(it.temperature)
+                showWeatherIcon(it.icon)
+                showHumidity(it.humidity)
+                showHumidityIcon(it.humidity)
+                showWindDirection(it.windDegree)
+                showWindDirectionIcon(it.windDegree)
+            }
+
+            navigation.observe(viewLifecycleOwner) {
+                if (it == true) {
+                    navigate()
+                    navigation.value = null
                 }
-                showHumidity(it.main.humidity)
-                showHumidityIcon(it.main.humidity)
-                showWindDirection(it.wind.deg)
-                showWindDirectionIcon(it.wind.deg)
             }
         }
     }
 
+    private fun navigate() {
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, SearchFragment())
+            .addToBackStack("DetailFragment")
+            .commit()
+    }
 
-    private fun showWeatherIcon(id: String) {
+    private fun showWeatherIcon(id: String?) {
         weatherUi.showWeatherIcon(binding?.ivWeatherIcon, id)
     }
 
@@ -87,7 +81,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
         weatherUi.showWindDirectionIcon(binding?.ivDirectionIcon, degree)
     }
 
-    private fun showTemp(temp: Double) {
+    private fun showTemp(temp: Double?) {
         weatherUi.showTemp(binding?.tvCityTemp, temp)
     }
 

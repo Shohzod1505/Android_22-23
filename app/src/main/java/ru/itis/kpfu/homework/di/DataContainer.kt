@@ -1,12 +1,17 @@
-package ru.itis.kpfu.homework.data
+package ru.itis.kpfu.homework.di
 
+import android.content.Context
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.itis.kpfu.homework.BuildConfig
-import ru.itis.kpfu.homework.data.interceptor.ApiKeyInterceptor
-import ru.itis.kpfu.homework.data.interceptor.MetricInterceptor
+import ru.itis.kpfu.homework.data.weather.datasource.remote.WeatherApi
+import ru.itis.kpfu.homework.data.WeatherRepositoryImpl
+import ru.itis.kpfu.homework.data.core.interceptor.ApiKeyInterceptor
+import ru.itis.kpfu.homework.data.core.interceptor.MetricInterceptor
+import ru.itis.kpfu.homework.domain.weather.GetWeatherByCoordUseCase
+import ru.itis.kpfu.homework.domain.weather.GetWeatherByNameUseCase
 import java.util.concurrent.TimeUnit
 
 object DataContainer {
@@ -38,6 +43,18 @@ object DataContainer {
             .build()
     }
 
-    val weatherApi = retrofit.create(WeatherApi::class.java)
+    private val weatherApi = retrofit.create(WeatherApi::class.java)
+
+    private val weatherRepository = WeatherRepositoryImpl(weatherApi)
+
+    val weatherByNameUseCase: GetWeatherByNameUseCase
+        get() = GetWeatherByNameUseCase(weatherRepository)
+
+    val weatherByCoordUseCase: GetWeatherByCoordUseCase
+        get() = GetWeatherByCoordUseCase(weatherRepository)
+
+    fun provideResources(
+        applicationContext: Context
+    ): ResourceProvider = ResourceProviderImpl(applicationContext)
 
 }

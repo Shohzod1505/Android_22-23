@@ -1,4 +1,4 @@
-package ru.itis.kpfu.homework.adapter
+package ru.itis.kpfu.homework.presentation.adapter
 
 import android.content.Context
 import android.graphics.Rect

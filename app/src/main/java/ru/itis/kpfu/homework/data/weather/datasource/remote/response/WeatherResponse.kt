@@ -1,4 +1,4 @@
-package ru.itis.kpfu.homework.data.response
+package ru.itis.kpfu.homework.data.weather.datasource.remote.response
 
 import com.google.gson.annotations.SerializedName
 

@@ -1,4 +1,4 @@
-package ru.itis.kpfu.homework.ui
+package ru.itis.kpfu.homework.presentation
 
 import android.graphics.Color
 import android.widget.ImageView
@@ -8,7 +8,7 @@ import ru.itis.kpfu.homework.R
 
 class WeatherUi {
 
-    fun showWeatherIcon(image: ImageView?, id: String) {
+    fun showWeatherIcon(image: ImageView?, id: String?) {
         image?.load("https://openweathermap.org/img/w/$id.png")
     }
 
@@ -40,9 +40,10 @@ class WeatherUi {
         }
     }
 
-    fun showTemp(view: TextView?, temp: Double) {
+    fun showTemp(view: TextView?, temp: Double?) {
         view?.run {
             text = "$temp C"
+            if(temp != null)
             when(temp) {
                 in -40.0..-5.0 -> setTextColor(Color.BLUE)
                 in -5.0..15.0 -> setTextColor(Color.CYAN)

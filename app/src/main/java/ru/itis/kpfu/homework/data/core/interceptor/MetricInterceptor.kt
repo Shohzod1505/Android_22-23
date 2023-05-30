@@ -1,4 +1,4 @@
-package ru.itis.kpfu.homework.data.interceptor
+package ru.itis.kpfu.homework.data.core.interceptor
 
 import okhttp3.Interceptor
 import okhttp3.Response

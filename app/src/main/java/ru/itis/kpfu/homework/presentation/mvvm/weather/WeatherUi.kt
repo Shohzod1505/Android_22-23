@@ -1,4 +1,4 @@
-package ru.itis.kpfu.homework.presentation.weather
+package ru.itis.kpfu.homework.presentation.mvvm.weather
 
 import android.graphics.Color
 import android.widget.ImageView

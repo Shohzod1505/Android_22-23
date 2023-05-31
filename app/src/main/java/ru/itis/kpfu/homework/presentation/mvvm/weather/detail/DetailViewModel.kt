@@ -1,4 +1,4 @@
-package ru.itis.kpfu.homework.presentation.weather.detail
+package ru.itis.kpfu.homework.presentation.mvvm.weather.detail
 
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.CreationExtras
@@ -9,16 +9,17 @@ import ru.itis.kpfu.homework.di.DataContainer
 import ru.itis.kpfu.homework.domain.weather.GetWeatherByCoordUseCase
 import ru.itis.kpfu.homework.domain.weather.GetWeatherByNameUseCase
 import ru.itis.kpfu.homework.domain.weather.WeatherInfo
+import javax.inject.Inject
 
-class DetailViewModel(
+class DetailViewModel @Inject constructor(
     private val getWeatherByNameUseCase: GetWeatherByNameUseCase,
     private val getWeatherByCoordUseCase: GetWeatherByCoordUseCase,
-    private val savedState: SavedStateHandle,
+//    private val savedState: SavedStateHandle,
 ): ViewModel() {
 
-    init {
-        savedState.getLiveData<String>("query")
-    }
+//    init {
+//        savedState.getLiveData<String>("query")
+//    }
 
     private val _weatherInfo = MutableLiveData<WeatherInfo?>(null)
     val weatherInfo: LiveData<WeatherInfo?>
@@ -52,8 +53,10 @@ class DetailViewModel(
             ): T {
                 val weatherByNameUseCase = DataContainer.weatherByNameUseCase
                 val weatherByCoordUseCase = DataContainer.weatherByCoordUseCase
-                 val savedStateHandle = extras.createSavedStateHandle()
-                return DetailViewModel(weatherByNameUseCase, weatherByCoordUseCase, savedStateHandle) as T
+//                val savedStateHandle = extras.createSavedStateHandle()
+                return DetailViewModel(
+                    weatherByNameUseCase,
+                    weatherByCoordUseCase) as T
             }
         }
 
@@ -61,8 +64,10 @@ class DetailViewModel(
             initializer {
                 val weatherByNameUseCase = DataContainer.weatherByNameUseCase
                 val weatherByCoordUseCase = DataContainer.weatherByCoordUseCase
-                 val savedStateHandle = createSavedStateHandle()
-                DetailViewModel(weatherByNameUseCase, weatherByCoordUseCase, savedStateHandle)
+//                val savedStateHandle = createSavedStateHandle()
+                DetailViewModel(
+                    weatherByNameUseCase,
+                    weatherByCoordUseCase)
             }
         }
 

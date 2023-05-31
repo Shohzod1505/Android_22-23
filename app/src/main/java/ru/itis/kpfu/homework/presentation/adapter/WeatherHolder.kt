@@ -3,7 +3,7 @@ package ru.itis.kpfu.homework.presentation.adapter
 import androidx.recyclerview.widget.RecyclerView
 import ru.itis.kpfu.homework.databinding.ItemWeatherBinding
 import ru.itis.kpfu.homework.domain.weather.WeatherInfo
-import ru.itis.kpfu.homework.presentation.weather.WeatherUi
+import ru.itis.kpfu.homework.presentation.mvvm.weather.WeatherUi
 
 class WeatherHolder(
     private val binding: ItemWeatherBinding,

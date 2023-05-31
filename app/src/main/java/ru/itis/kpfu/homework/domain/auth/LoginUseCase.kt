@@ -1,6 +1,8 @@
 package ru.itis.kpfu.homework.domain.auth
 
-class LoginUseCase(
+import javax.inject.Inject
+
+class LoginUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
 

@@ -1,4 +1,4 @@
-package ru.itis.kpfu.homework.presentation.weather.search
+package ru.itis.kpfu.homework.presentation.mvvm.weather.search
 
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.CreationExtras
@@ -8,11 +8,11 @@ import kotlinx.coroutines.launch
 import ru.itis.kpfu.homework.di.DataContainer
 import ru.itis.kpfu.homework.domain.weather.GetWeatherByCoordUseCase
 import ru.itis.kpfu.homework.domain.weather.GetWeatherByNameUseCase
+import javax.inject.Inject
 
-class SearchViewModel(
+class SearchViewModel @Inject constructor(
     private val getWeatherByNameUseCase: GetWeatherByNameUseCase,
     private val getWeatherByCoordUseCase: GetWeatherByCoordUseCase,
-    private val savedState: SavedStateHandle,
 //    private val resourceProvider: ResourceProvider,
 ): ViewModel() {
 
@@ -72,11 +72,10 @@ class SearchViewModel(
                 val weatherByNameUseCase = DataContainer.weatherByNameUseCase
                 val weatherByCoordUseCase = DataContainer.weatherByCoordUseCase
 //                val resourceProvider = DataContainer.provideResources()
-                val savedStateHandle = extras.createSavedStateHandle()
+//                val savedStateHandle = extras.createSavedStateHandle()
                 return SearchViewModel(
                     weatherByNameUseCase,
                     weatherByCoordUseCase,
-                    savedStateHandle,
 //                    resourceProvider
                 ) as T
             }
@@ -87,11 +86,10 @@ class SearchViewModel(
                 val weatherByNameUseCase = DataContainer.weatherByNameUseCase
                 val weatherByCoordUseCase = DataContainer.weatherByCoordUseCase
 //                val resourceProvider = DataContainer.provideResources()
-                val savedStateHandle = createSavedStateHandle()
+//                val savedStateHandle = createSavedStateHandle()
                 SearchViewModel(
                     weatherByNameUseCase,
                     weatherByCoordUseCase,
-                    savedStateHandle,
 //                    resourceProvider
                 )
             }

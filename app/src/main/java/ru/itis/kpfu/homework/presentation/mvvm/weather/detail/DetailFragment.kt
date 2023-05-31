@@ -1,4 +1,4 @@
-package ru.itis.kpfu.homework.presentation.weather.detail;
+package ru.itis.kpfu.homework.presentation.mvvm.weather.detail;
 
 import android.os.Bundle
 import android.view.View
@@ -7,8 +7,8 @@ import androidx.fragment.app.viewModels
 import ru.itis.kpfu.homework.App
 import ru.itis.kpfu.homework.R
 import ru.itis.kpfu.homework.databinding.FragmentDetailBinding
-import ru.itis.kpfu.homework.presentation.weather.WeatherUi
-import ru.itis.kpfu.homework.presentation.weather.search.SearchFragment
+import ru.itis.kpfu.homework.presentation.mvvm.weather.WeatherUi
+import ru.itis.kpfu.homework.presentation.mvvm.weather.search.SearchFragment
 
 class DetailFragment : Fragment(R.layout.fragment_detail) {
     private var binding: FragmentDetailBinding? = null
@@ -17,13 +17,12 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
         DetailViewModel.Factory
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        App.appComponent.plusDetailComponent()
-            .provideModule(DetailModule())
-            .build()
-            .inject(this)
-        super.onCreate(savedInstanceState)
-    }
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        App.appComponent.plusDetailComponent()
+//            .build()
+//            .inject(this)
+//        super.onCreate(savedInstanceState)
+//    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

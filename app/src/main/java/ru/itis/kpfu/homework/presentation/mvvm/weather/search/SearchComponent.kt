@@ -1,4 +1,4 @@
-package ru.itis.kpfu.homework.presentation.weather.search
+package ru.itis.kpfu.homework.presentation.mvvm.weather.search
 
 import dagger.Subcomponent
 import ru.itis.kpfu.homework.di.FeatureScope
@@ -11,8 +11,6 @@ interface SearchComponent {
 
     @Subcomponent.Builder
     interface Builder {
-
-        fun provideModule(module: SearchModule): Builder
         fun build(): SearchComponent
     }
 

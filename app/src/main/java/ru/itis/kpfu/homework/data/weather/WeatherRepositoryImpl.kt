@@ -1,4 +1,4 @@
-package ru.itis.kpfu.homework.data
+package ru.itis.kpfu.homework.data.weather
 
 import ru.itis.kpfu.homework.data.weather.datasource.remote.WeatherApi
 import ru.itis.kpfu.homework.data.weather.mapper.toWeatherInfo

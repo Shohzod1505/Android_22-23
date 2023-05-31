@@ -1,19 +1,28 @@
-package ru.itis.kpfu.homework.presentation.screens;
+package ru.itis.kpfu.homework.presentation.weather.detail;
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import ru.itis.kpfu.homework.App
 import ru.itis.kpfu.homework.R
 import ru.itis.kpfu.homework.databinding.FragmentDetailBinding
-import ru.itis.kpfu.homework.presentation.WeatherUi
-import ru.itis.kpfu.homework.presentation.viewmodel.DetailViewModel
+import ru.itis.kpfu.homework.presentation.weather.WeatherUi
+import ru.itis.kpfu.homework.presentation.weather.search.SearchFragment
 
 class DetailFragment : Fragment(R.layout.fragment_detail) {
     private var binding: FragmentDetailBinding? = null
     private val weatherUi = WeatherUi()
     private val viewModel: DetailViewModel by viewModels {
         DetailViewModel.Factory
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        App.appComponent.plusDetailComponent()
+            .provideModule(DetailModule())
+            .build()
+            .inject(this)
+        super.onCreate(savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

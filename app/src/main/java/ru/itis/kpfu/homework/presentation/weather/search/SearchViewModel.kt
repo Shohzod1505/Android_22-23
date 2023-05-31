@@ -1,11 +1,10 @@
-package ru.itis.kpfu.homework.presentation.viewmodel
+package ru.itis.kpfu.homework.presentation.weather.search
 
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.launch
-import ru.itis.kpfu.homework.di.ResourceProvider
 import ru.itis.kpfu.homework.di.DataContainer
 import ru.itis.kpfu.homework.domain.weather.GetWeatherByCoordUseCase
 import ru.itis.kpfu.homework.domain.weather.GetWeatherByNameUseCase

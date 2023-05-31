@@ -1,4 +1,4 @@
-package ru.itis.kpfu.homework.presentation.viewmodel
+package ru.itis.kpfu.homework.presentation.weather.detail
 
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.CreationExtras

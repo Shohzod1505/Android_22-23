@@ -1,4 +1,4 @@
-package ru.itis.kpfu.homework.di
+package ru.itis.kpfu.homework.utils
 
 import android.content.Context
 

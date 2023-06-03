@@ -2,10 +2,7 @@ package ru.itis.kpfu.homework.presentation.mvvm.weather.detail
 
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.CreationExtras
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import kotlinx.coroutines.launch
-import ru.itis.kpfu.homework.di.DataContainer
 import ru.itis.kpfu.homework.domain.weather.GetWeatherByCoordUseCase
 import ru.itis.kpfu.homework.domain.weather.GetWeatherByNameUseCase
 import ru.itis.kpfu.homework.domain.weather.WeatherInfo
@@ -45,14 +42,15 @@ class DetailViewModel @Inject constructor(
 
     companion object {
 
-        val Factory: ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+        fun factory(
+            weatherByNameUseCase: GetWeatherByNameUseCase,
+            weatherByCoordUseCase: GetWeatherByCoordUseCase,
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(
                 modelClass: Class<T>,
                 extras: CreationExtras
             ): T {
-                val weatherByNameUseCase = DataContainer.weatherByNameUseCase
-                val weatherByCoordUseCase = DataContainer.weatherByCoordUseCase
 //                val savedStateHandle = extras.createSavedStateHandle()
                 return DetailViewModel(
                     weatherByNameUseCase,

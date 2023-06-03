@@ -5,5 +5,7 @@ import ru.itis.kpfu.homework.data.weather.datasource.local.entity.Weather
 class SaveWeatherUseCase(
     private val weatherRoomRepository: WeatherRoomRepository
 ) {
-    suspend operator fun invoke(weather: Weather) = weatherRoomRepository.saveWeatherUseCase(weather)
+    suspend operator fun invoke(
+        weather: Weather
+    ) = weatherRoomRepository.saveWeatherUseCase(weather)
 }

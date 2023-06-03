@@ -2,7 +2,6 @@ package ru.itis.kpfu.homework.data.weather.datasource.local
 
 import ru.itis.kpfu.homework.data.weather.datasource.local.dao.WeatherDao
 import ru.itis.kpfu.homework.data.weather.datasource.local.entity.Weather
-import ru.itis.kpfu.homework.domain.weather.SaveWeatherUseCase
 import ru.itis.kpfu.homework.domain.weather.WeatherRoomRepository
 
 class WeatherRoomRepositoryImpl(

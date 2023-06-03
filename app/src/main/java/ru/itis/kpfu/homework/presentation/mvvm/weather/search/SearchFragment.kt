@@ -16,7 +16,6 @@ import dagger.android.support.DaggerFragment
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import ru.itis.kpfu.homework.R
-import ru.itis.kpfu.homework.data.weather.datasource.local.WeatherRoomRepositoryImpl
 import ru.itis.kpfu.homework.data.weather.mapper.toWeather
 import ru.itis.kpfu.homework.presentation.adapter.SpaceItemDecorator
 import ru.itis.kpfu.homework.presentation.adapter.WeatherAdapter

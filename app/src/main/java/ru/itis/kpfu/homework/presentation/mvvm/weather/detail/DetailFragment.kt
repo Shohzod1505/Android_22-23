@@ -2,11 +2,9 @@ package ru.itis.kpfu.homework.presentation.mvvm.weather.detail;
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import dagger.android.support.DaggerFragment
-import ru.itis.kpfu.homework.App
 import ru.itis.kpfu.homework.R
 import ru.itis.kpfu.homework.databinding.FragmentDetailBinding
 import ru.itis.kpfu.homework.presentation.mvvm.weather.WeatherUi

@@ -4,7 +4,6 @@ import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.CreationExtras
 import kotlinx.coroutines.launch
 import ru.itis.kpfu.homework.data.weather.datasource.local.entity.Weather
-import ru.itis.kpfu.homework.di.DataContainer
 import ru.itis.kpfu.homework.domain.weather.*
 import javax.inject.Inject
 

@@ -10,7 +10,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import ru.itis.kpfu.homework.BuildConfig
 import ru.itis.kpfu.homework.data.core.interceptor.ApiKeyInterceptor
 import ru.itis.kpfu.homework.data.core.interceptor.MetricInterceptor
-import ru.itis.kpfu.homework.data.weather.WeatherRepositoryImpl
 import ru.itis.kpfu.homework.data.weather.datasource.remote.WeatherApi
 import java.util.concurrent.TimeUnit
 import javax.inject.Named

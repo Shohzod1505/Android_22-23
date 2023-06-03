@@ -59,18 +59,6 @@ class DetailViewModel @Inject constructor(
                     weatherByCoordUseCase) as T
             }
         }
-
-        val FactoryExt: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val weatherByNameUseCase = DataContainer.weatherByNameUseCase
-                val weatherByCoordUseCase = DataContainer.weatherByCoordUseCase
-//                val savedStateHandle = createSavedStateHandle()
-                DetailViewModel(
-                    weatherByNameUseCase,
-                    weatherByCoordUseCase)
-            }
-        }
-
     }
 
 }

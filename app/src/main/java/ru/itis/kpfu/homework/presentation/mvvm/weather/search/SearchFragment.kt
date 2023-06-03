@@ -1,6 +1,7 @@
 package ru.itis.kpfu.homework.presentation.mvvm.weather.search;
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -15,7 +16,7 @@ import dagger.android.support.DaggerFragment
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import ru.itis.kpfu.homework.R
-import ru.itis.kpfu.homework.data.weather.datasource.local.WeatherRepository
+import ru.itis.kpfu.homework.data.weather.datasource.local.WeatherRoomRepositoryImpl
 import ru.itis.kpfu.homework.data.weather.mapper.toWeather
 import ru.itis.kpfu.homework.presentation.adapter.SpaceItemDecorator
 import ru.itis.kpfu.homework.presentation.adapter.WeatherAdapter
@@ -27,7 +28,6 @@ import javax.inject.Inject
 class SearchFragment : DaggerFragment(R.layout.fragment_search) {
     private var binding: FragmentSearchBinding? = null
     private var adapter: WeatherAdapter? = null
-    private var repositoryRoom: WeatherRepository? = null
 
     @Inject
     lateinit var factory: ViewModelProvider.Factory
@@ -38,13 +38,12 @@ class SearchFragment : DaggerFragment(R.layout.fragment_search) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding = FragmentSearchBinding.bind(view)
         setHasOptionsMenu(true)
+
         observeViewModel()
 
         binding?.run {
-            repositoryRoom = WeatherRepository(requireContext())
             val itemDecoration = SpaceItemDecorator(requireContext(), 16f)
             lifecycleScope.launch {
                 val locationList: List<WeatherInfo?> = async {
@@ -65,7 +64,9 @@ class SearchFragment : DaggerFragment(R.layout.fragment_search) {
                     lifecycleScope.launch {
                         viewModel.loadWeather(it?.lat, it?.lon)
                         viewModel.getWeatherByCoord(it?.lat, it?.lon).let {
-                                repositoryRoom?.saveWeather(it.toWeather())
+                                viewModel.saveWeather(it.toWeather())
+                                 Log.d("Room_DEBUG", "${viewModel.findWeatherByName(it.name)}")
+
                             }
                     }
                 }
@@ -94,7 +95,7 @@ class SearchFragment : DaggerFragment(R.layout.fragment_search) {
                         viewModel.loadWeather(query)
                         lifecycleScope.launch {
                             viewModel.getWeatherByName(query).let {
-                                repositoryRoom?.saveWeather(it.toWeather())
+                                viewModel.saveWeather(it.toWeather())
                             }
                         }
                         return true

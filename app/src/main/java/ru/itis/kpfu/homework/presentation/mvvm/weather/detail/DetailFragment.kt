@@ -1,19 +1,25 @@
-package ru.itis.kpfu.homework.presentation.screens;
+package ru.itis.kpfu.homework.presentation.mvvm.weather.detail;
 
 import android.os.Bundle
 import android.view.View
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import dagger.android.support.DaggerFragment
 import ru.itis.kpfu.homework.R
 import ru.itis.kpfu.homework.databinding.FragmentDetailBinding
-import ru.itis.kpfu.homework.presentation.WeatherUi
-import ru.itis.kpfu.homework.presentation.viewmodel.DetailViewModel
+import ru.itis.kpfu.homework.presentation.mvvm.weather.WeatherUi
+import ru.itis.kpfu.homework.presentation.mvvm.weather.search.SearchFragment
+import javax.inject.Inject
 
-class DetailFragment : Fragment(R.layout.fragment_detail) {
+class DetailFragment : DaggerFragment(R.layout.fragment_detail) {
     private var binding: FragmentDetailBinding? = null
     private val weatherUi = WeatherUi()
+
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
+
     private val viewModel: DetailViewModel by viewModels {
-        DetailViewModel.Factory
+        factory
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

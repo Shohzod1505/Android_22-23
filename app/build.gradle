@@ -52,7 +52,7 @@ dependencies {
     def coroutine = "1.7.0"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.6.1"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutine"
     /* =======================================Retrofit=========================================== */
     def retrofit = "2.9.0"
     implementation "com.squareup.retrofit2:retrofit:$retrofit"
@@ -70,12 +70,13 @@ dependencies {
     def lifecycle = "2.6.1"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle"
-    /* =======================================MOXY=============================================== */
-    def moxy = "2.2.2"
-    implementation "com.github.moxy-community:moxy:$moxy"
-    implementation "com.github.moxy-community:moxy-androidx:$moxy"
-    implementation "com.github.moxy-community:moxy-ktx:$moxy"
-    kapt "com.github.moxy-community:moxy-compiler:$moxy"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle"
+    /* =======================================Dagger2============================================ */
+    def dagger = "2.45"
+    implementation "com.google.dagger:dagger:$dagger"
+    kapt "com.google.dagger:dagger-compiler:$dagger"
+    implementation "com.google.dagger:dagger-android-support:$dagger"
+    kapt "com.google.dagger:dagger-android-processor:$dagger"
     /* =======================================Utils============================================== */
     implementation 'com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0'
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0'

@@ -1,9 +1,10 @@
-package ru.itis.kpfu.homework.presentation.screens
+package ru.itis.kpfu.homework.presentation
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import ru.itis.kpfu.homework.R
 import ru.itis.kpfu.homework.databinding.ActivityMainBinding
+import ru.itis.kpfu.homework.presentation.mvvm.weather.search.SearchFragment
 
 class MainActivity : AppCompatActivity() {
 

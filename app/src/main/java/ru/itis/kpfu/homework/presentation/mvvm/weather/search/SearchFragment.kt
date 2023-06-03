@@ -1,6 +1,7 @@
-package ru.itis.kpfu.homework.presentation.screens;
+package ru.itis.kpfu.homework.presentation.mvvm.weather.search;
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -8,37 +9,40 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView as KotlinSearchView
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import dagger.android.support.DaggerFragment
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import ru.itis.kpfu.homework.R
-import ru.itis.kpfu.homework.data.weather.datasource.local.WeatherRepository
 import ru.itis.kpfu.homework.data.weather.mapper.toWeather
 import ru.itis.kpfu.homework.presentation.adapter.SpaceItemDecorator
 import ru.itis.kpfu.homework.presentation.adapter.WeatherAdapter
 import ru.itis.kpfu.homework.databinding.FragmentSearchBinding
 import ru.itis.kpfu.homework.domain.weather.WeatherInfo
-import ru.itis.kpfu.homework.presentation.viewmodel.SearchViewModel
+import ru.itis.kpfu.homework.presentation.mvvm.weather.detail.DetailFragment
+import javax.inject.Inject
 
-class SearchFragment : Fragment(R.layout.fragment_search) {
+class SearchFragment : DaggerFragment(R.layout.fragment_search) {
     private var binding: FragmentSearchBinding? = null
     private var adapter: WeatherAdapter? = null
-    private var repositoryRoom: WeatherRepository? = null
+
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
+
     private val viewModel: SearchViewModel by viewModels {
-        SearchViewModel.Factory
+        factory
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         binding = FragmentSearchBinding.bind(view)
         setHasOptionsMenu(true)
+
         observeViewModel()
 
         binding?.run {
-            repositoryRoom = WeatherRepository(requireContext())
             val itemDecoration = SpaceItemDecorator(requireContext(), 16f)
             lifecycleScope.launch {
                 val locationList: List<WeatherInfo?> = async {
@@ -59,7 +63,9 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                     lifecycleScope.launch {
                         viewModel.loadWeather(it?.lat, it?.lon)
                         viewModel.getWeatherByCoord(it?.lat, it?.lon).let {
-                                repositoryRoom?.saveWeather(it.toWeather())
+                                viewModel.saveWeather(it.toWeather())
+                                 Log.d("Room_DEBUG", "${viewModel.findWeatherByName(it.name)}")
+
                             }
                     }
                 }
@@ -88,7 +94,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
                         viewModel.loadWeather(query)
                         lifecycleScope.launch {
                             viewModel.getWeatherByName(query).let {
-                                repositoryRoom?.saveWeather(it.toWeather())
+                                viewModel.saveWeather(it.toWeather())
                             }
                         }
                         return true

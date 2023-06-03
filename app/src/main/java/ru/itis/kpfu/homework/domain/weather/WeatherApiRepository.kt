@@ -1,6 +1,6 @@
 package ru.itis.kpfu.homework.domain.weather
 
-interface WeatherRepository {
+interface WeatherApiRepository {
 
     suspend fun getWeatherByName(query: String?): WeatherInfo
 

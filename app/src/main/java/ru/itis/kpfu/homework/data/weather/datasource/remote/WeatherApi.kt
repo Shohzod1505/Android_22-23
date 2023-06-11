@@ -1,5 +1,6 @@
 package ru.itis.kpfu.homework.data.weather.datasource.remote
 
+import io.reactivex.rxjava3.core.Single
 import retrofit2.http.GET
 import retrofit2.http.Query
 import ru.itis.kpfu.homework.data.weather.datasource.remote.response.WeatherResponse
@@ -7,14 +8,14 @@ import ru.itis.kpfu.homework.data.weather.datasource.remote.response.WeatherResp
 interface WeatherApi {
 
     @GET("weather")
-    suspend fun getWeather(
+    fun getWeather(
         @Query("q") city: String?
-    ): WeatherResponse
+    ): Single<WeatherResponse>
 
     @GET("weather")
-    suspend fun getWeather(
+    fun getWeather(
         @Query("lat") lat: Double?,
         @Query("lon") lon: Double?,
-    ): WeatherResponse
+    ): Single<WeatherResponse>
 
 }

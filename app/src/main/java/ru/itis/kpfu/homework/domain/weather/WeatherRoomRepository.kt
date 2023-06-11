@@ -1,13 +1,15 @@
 package ru.itis.kpfu.homework.domain.weather
 
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Single
 import ru.itis.kpfu.homework.data.weather.datasource.local.entity.Weather
 
 interface WeatherRoomRepository {
 
-    suspend fun saveWeatherUseCase(weather: Weather)
+    fun saveWeatherUseCase(weather: Weather): Completable
 
-    suspend fun deleteWeatherUseCase(weather: Weather)
+    fun deleteWeatherUseCase(weather: Weather): Completable
 
-    suspend fun findWeatherByNameUseCase(name: String): Weather?
+    fun findWeatherByNameUseCase(name: String): Single<Weather>
 
 }

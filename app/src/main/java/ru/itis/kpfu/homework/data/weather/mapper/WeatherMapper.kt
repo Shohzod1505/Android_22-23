@@ -1,5 +1,6 @@
 package ru.itis.kpfu.homework.data.weather.mapper
 
+import io.reactivex.rxjava3.core.Single
 import ru.itis.kpfu.homework.data.weather.datasource.local.entity.Weather
 import ru.itis.kpfu.homework.data.weather.datasource.remote.response.WeatherResponse
 import ru.itis.kpfu.homework.domain.weather.WeatherInfo
@@ -27,3 +28,4 @@ fun WeatherInfo.toWeather() = Weather(
     lat = lat,
     lon = lon,
 )
+

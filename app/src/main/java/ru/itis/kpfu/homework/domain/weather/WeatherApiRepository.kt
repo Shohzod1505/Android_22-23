@@ -1,9 +1,11 @@
 package ru.itis.kpfu.homework.domain.weather
 
+import io.reactivex.rxjava3.core.Single
+
 interface WeatherApiRepository {
 
-    suspend fun getWeatherByName(query: String?): WeatherInfo
+    fun getWeatherByName(query: String?): Single<WeatherInfo>
 
-    suspend fun getWeatherByCoord(lat: Double?, lon: Double?): WeatherInfo
+    fun getWeatherByCoord(lat: Double?, lon: Double?): Single<WeatherInfo>
 
 }

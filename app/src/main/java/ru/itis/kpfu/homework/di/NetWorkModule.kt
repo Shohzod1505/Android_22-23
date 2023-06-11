@@ -6,6 +6,7 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.itis.kpfu.homework.BuildConfig
 import ru.itis.kpfu.homework.data.core.interceptor.ApiKeyInterceptor
@@ -56,6 +57,7 @@ class NetWorkModule {
             .client(httpClient)
             .baseUrl(baseUrl)
             .addConverterFactory(gsonFactory)
+            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
             .build()
 
     @Provides

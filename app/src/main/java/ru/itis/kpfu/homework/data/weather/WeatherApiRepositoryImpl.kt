@@ -1,5 +1,7 @@
 package ru.itis.kpfu.homework.data.weather
 
+import io.reactivex.rxjava3.core.Single
+import io.reactivex.rxjava3.schedulers.Schedulers
 import ru.itis.kpfu.homework.data.weather.datasource.remote.WeatherApi
 import ru.itis.kpfu.homework.data.weather.mapper.toWeatherInfo
 import ru.itis.kpfu.homework.domain.weather.WeatherInfo
@@ -9,12 +11,18 @@ class WeatherApiRepositoryImpl(
     private val weatherApi: WeatherApi
 ): WeatherApiRepository {
 
-    override suspend fun getWeatherByName(
+    override fun getWeatherByName(
         query: String?
-    ): WeatherInfo = weatherApi.getWeather(query).toWeatherInfo()
+    ): Single<WeatherInfo> = weatherApi.getWeather(query)
+        .observeOn(Schedulers.computation())
+        .map { it.toWeatherInfo() }
+        .subscribeOn(Schedulers.io())
 
-    override suspend fun getWeatherByCoord(
+    override fun getWeatherByCoord(
         lat: Double?, lon: Double?
-    ): WeatherInfo = weatherApi.getWeather(lat, lon).toWeatherInfo()
+    ): Single<WeatherInfo> = weatherApi.getWeather(lat, lon)
+        .observeOn(Schedulers.computation())
+        .map { it.toWeatherInfo() }
+        .subscribeOn(Schedulers.io())
 
 }

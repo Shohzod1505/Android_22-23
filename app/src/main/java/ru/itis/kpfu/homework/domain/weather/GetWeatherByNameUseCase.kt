@@ -1,9 +1,11 @@
 package ru.itis.kpfu.homework.domain.weather
 
+import io.reactivex.rxjava3.core.Single
+
 class GetWeatherByNameUseCase(
     private val weatherApiRepository: WeatherApiRepository
 ) {
-    suspend operator fun invoke(
+    operator fun invoke(
         query: String?
-    ): WeatherInfo = weatherApiRepository.getWeatherByName(query)
+    ): Single<WeatherInfo> = weatherApiRepository.getWeatherByName(query)
 }

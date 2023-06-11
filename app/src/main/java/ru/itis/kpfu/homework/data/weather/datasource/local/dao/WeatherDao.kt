@@ -1,18 +1,20 @@
 package ru.itis.kpfu.homework.data.weather.datasource.local.dao
 
 import androidx.room.*
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Single
 import ru.itis.kpfu.homework.data.weather.datasource.local.entity.Weather
 
 @Dao
 interface WeatherDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun save(weather: Weather)
+    fun save(weather: Weather): Completable
 
     @Delete
-    suspend fun delete(weather: Weather)
+    fun delete(weather: Weather): Completable
 
     @Query("SELECT * FROM weather WHERE name = :name")
-    suspend fun findByName(name: String): Weather?
+    fun findByName(name: String): Single<Weather>
 
 }

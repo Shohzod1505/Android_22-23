@@ -2,7 +2,11 @@ package ru.itis.kpfu.homework.presentation.mvvm.weather.search
 
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.CreationExtras
-import kotlinx.coroutines.launch
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.plusAssign
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import ru.itis.kpfu.homework.data.weather.datasource.local.entity.Weather
 import ru.itis.kpfu.homework.domain.weather.*
 import javax.inject.Inject
@@ -16,7 +20,7 @@ class SearchViewModel @Inject constructor(
 //    private val resourceProvider: ResourceProvider,
 ): ViewModel() {
 
-    private val _loading = MutableLiveData<Boolean>(false)
+    private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean>
         get() = _loading
 
@@ -28,48 +32,49 @@ class SearchViewModel @Inject constructor(
 
     val navigationCoord = MutableLiveData<DoubleArray?>(null)
 
+    var disposable: CompositeDisposable = CompositeDisposable()
+
     fun loadWeather(query: String?) {
-        viewModelScope.launch {
-            try {
-                _loading.value = true
-                getWeatherByNameUseCase(query)
+        disposable += getWeatherByNameUseCase(query)
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { _loading.value = true }
+            .doAfterTerminate { _loading.value = false }
+            .subscribeBy(onSuccess = {
                 navigationName.value = query
-            } catch (error: Throwable) {
+            }, onError = {
                 _error.value = "City not found!"
-            } finally {
-                _loading.value = false
-            }
-        }
+            },)
     }
 
     fun loadWeather(lat: Double?, lon: Double?) {
-        viewModelScope.launch {
-            try {
-                _loading.value = true
-                getWeatherByCoordUseCase(lat, lon)
+        disposable += getWeatherByCoordUseCase(lat, lon)
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { _loading.value = true }
+            .doAfterTerminate { _loading.value = false }
+            .subscribeBy(onSuccess = {
                 if (lat != null && lon != null)
                     navigationCoord.value = doubleArrayOf(lat, lon)
-            } catch (error: Throwable) {
+            }, onError = {
                 _error.value = "City not found!"
-            } finally {
-                _loading.value = false
-            }
-        }
+            },)
     }
 
-    suspend fun saveWeather(weather: Weather) {
-        saveWeatherUseCase(weather)
+    fun saveWeather(weather: Weather): Completable {
+        return saveWeatherUseCase(weather)
     }
 
-    suspend fun deleteWeather(weather: Weather) {
-        deleteWeatherUseCase(weather)
+    fun deleteWeather(weather: Weather): Completable {
+        return deleteWeatherUseCase(weather)
     }
 
-    suspend fun findWeatherByName(name: String): Weather? = findWeatherByNameUseCase(name)
+    fun getWeatherByName(query: String?) = getWeatherByNameUseCase(query)
 
-    suspend fun getWeatherByName(query: String?) = getWeatherByNameUseCase(query)
+    fun getWeatherByCoord(lat: Double?, lon: Double?) = getWeatherByCoordUseCase(lat, lon)
 
-    suspend fun getWeatherByCoord(lat: Double?, lon: Double?) = getWeatherByCoordUseCase(lat, lon)
+    override fun onCleared() {
+        super.onCleared()
+        disposable.clear()
+    }
 
     companion object {
 

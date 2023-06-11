@@ -2,6 +2,7 @@ package ru.itis.kpfu.homework.presentation.mvvm.weather.detail;
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import dagger.android.support.DaggerFragment
@@ -59,6 +60,10 @@ class DetailFragment : DaggerFragment(R.layout.fragment_detail) {
                 showWindDirectionIcon(it.windDegree)
             }
 
+            error.observe(viewLifecycleOwner) {
+//                showError(it)
+            }
+
             navigation.observe(viewLifecycleOwner) {
                 if (it == true) {
                     navigate()
@@ -67,6 +72,10 @@ class DetailFragment : DaggerFragment(R.layout.fragment_detail) {
             }
         }
     }
+
+//    private fun showError(error: String) {
+//        Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show()
+//    }
 
     private fun navigate() {
         parentFragmentManager.beginTransaction()

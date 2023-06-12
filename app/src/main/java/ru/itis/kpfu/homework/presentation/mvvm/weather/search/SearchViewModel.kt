@@ -2,9 +2,13 @@ package ru.itis.kpfu.homework.presentation.mvvm.weather.search
 
 import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.CreationExtras
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import ru.itis.kpfu.homework.data.weather.datasource.local.entity.Weather
 import ru.itis.kpfu.homework.domain.weather.*
+import ru.itis.kpfu.homework.presentation.mvvm.weather.detail.DetailViewModel
 import javax.inject.Inject
 
 class SearchViewModel @Inject constructor(
@@ -16,46 +20,18 @@ class SearchViewModel @Inject constructor(
 //    private val resourceProvider: ResourceProvider,
 ): ViewModel() {
 
-    private val _loading = MutableLiveData<Boolean>(false)
-    val loading: LiveData<Boolean>
-        get() = _loading
+    private val _state: MutableStateFlow<ScreenState> = MutableStateFlow(ScreenState.Initial)
+    val state = _state.asStateFlow()
 
-    private val _error = MutableLiveData<String>()
-    val error: LiveData<String>
-        get() = _error
+    private val _stateData: MutableStateFlow<ScreenStateData> = MutableStateFlow(ScreenStateData())
+    val stateData = _stateData.asStateFlow()
+
+    private val _command: MutableStateFlow<ScreenCommand> = MutableStateFlow(ScreenCommand.Initial)
+    val command = _command.asStateFlow()
 
     val navigationName = MutableLiveData<String?>(null)
 
     val navigationCoord = MutableLiveData<DoubleArray?>(null)
-
-    fun loadWeather(query: String?) {
-        viewModelScope.launch {
-            try {
-                _loading.value = true
-                getWeatherByNameUseCase(query)
-                navigationName.value = query
-            } catch (error: Throwable) {
-                _error.value = "City not found!"
-            } finally {
-                _loading.value = false
-            }
-        }
-    }
-
-    fun loadWeather(lat: Double?, lon: Double?) {
-        viewModelScope.launch {
-            try {
-                _loading.value = true
-                getWeatherByCoordUseCase(lat, lon)
-                if (lat != null && lon != null)
-                    navigationCoord.value = doubleArrayOf(lat, lon)
-            } catch (error: Throwable) {
-                _error.value = "City not found!"
-            } finally {
-                _loading.value = false
-            }
-        }
-    }
 
     suspend fun saveWeather(weather: Weather) {
         saveWeatherUseCase(weather)
@@ -71,8 +47,86 @@ class SearchViewModel @Inject constructor(
 
     suspend fun getWeatherByCoord(lat: Double?, lon: Double?) = getWeatherByCoordUseCase(lat, lon)
 
-    companion object {
+    fun reducer(event: ScreenEvent) {
+        when (event) {
+            is ScreenEvent.OnQueryChangeName -> onQueryChangeName(event.query)
+            is ScreenEvent.OnQueryChangeCoord -> onQueryChangeCoord(event.lat, event.lon)
+            is ScreenEvent.OnCreate -> onCreate(event.id)
+        }
+    }
 
+    private fun onCreate(id: Int) {
+
+    }
+
+    private fun onQueryChangeName(query: String) {
+        viewModelScope.launch {
+            try {
+                _state.emit(ScreenState.Loading(true))
+
+                _stateData.emit(_stateData.value.copy(
+                    isLoading = true
+                ))
+
+                getWeatherByNameUseCase(query)
+                navigationName.value = query
+            } catch (error: Throwable) {
+                _state.emit(ScreenState.Error("City not found!"))
+
+                _stateData.emit(_stateData.value.copy(
+                    error = "City not found!"
+                ))
+            } finally {
+                _state.emit(ScreenState.Loading(false))
+
+                _stateData.emit(_stateData.value.copy(
+                    isLoading = false
+                ))
+            }
+        }
+    }
+
+    private fun onQueryChangeCoord(lat: Double?, lon: Double?) {
+        viewModelScope.launch {
+            try {
+                _state.emit(ScreenState.Loading(true))
+                getWeatherByCoordUseCase(lat, lon)
+                if (lat != null && lon != null)
+                    navigationCoord.value = doubleArrayOf(lat, lon)
+            } catch (error: Throwable) {
+                _state.emit(ScreenState.Error("City not found!"))
+            } finally {
+                _state.emit(ScreenState.Loading(false))
+            }
+        }
+    }
+
+    sealed interface ScreenEvent {
+        data class OnQueryChangeName(val query: String) : ScreenEvent
+        data class OnQueryChangeCoord(val lat: Double?, val lon: Double?) : ScreenEvent
+        data class OnCreate(val id: Int) : ScreenEvent
+    }
+
+    sealed interface ScreenState {
+        object Initial : ScreenState
+        data class Loading(val isLoading: Boolean) : ScreenState
+        data class Error(val error: String) : ScreenState
+        data class SuccessData(val weatherInfo: WeatherInfo) : ScreenState
+    }
+
+    data class ScreenStateData(
+        val isLoading: Boolean = false,
+        val error: String? = null,
+        val weatherInfo: WeatherInfo? = null,
+        val navigateToX: String? = null
+    )
+
+    sealed interface ScreenCommand {
+        object Initial : ScreenCommand
+        data class ShowToast(val text: String): ScreenCommand
+    }
+
+    companion object {
         fun factory(
             weatherByNameUseCase: GetWeatherByNameUseCase,
             weatherByCoordUseCase: GetWeatherByCoordUseCase,
@@ -86,8 +140,6 @@ class SearchViewModel @Inject constructor(
                 modelClass: Class<T>,
                 extras: CreationExtras
             ): T {
-//                val resourceProvider = DataContainer.provideResources()
-//                val savedStateHandle = extras.createSavedStateHandle()
                 return SearchViewModel(
                     weatherByNameUseCase,
                     weatherByCoordUseCase,

@@ -11,9 +11,13 @@ import androidx.appcompat.widget.SearchView as KotlinSearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import dagger.android.support.DaggerFragment
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.itis.kpfu.homework.R
 import ru.itis.kpfu.homework.data.weather.mapper.toWeather
@@ -40,7 +44,8 @@ class SearchFragment : DaggerFragment(R.layout.fragment_search) {
         binding = FragmentSearchBinding.bind(view)
         setHasOptionsMenu(true)
 
-        observeViewModel()
+        observeState()
+        observeCommand()
 
         binding?.run {
             val itemDecoration = SpaceItemDecorator(requireContext(), 16f)
@@ -61,11 +66,10 @@ class SearchFragment : DaggerFragment(R.layout.fragment_search) {
                 }.await()
                 adapter = WeatherAdapter(locationList) {
                     lifecycleScope.launch {
-                        viewModel.loadWeather(it?.lat, it?.lon)
+                        viewModel.reducer(SearchViewModel.ScreenEvent.OnQueryChangeCoord(it?.lat, it?.lon))
                         viewModel.getWeatherByCoord(it?.lat, it?.lon).let {
                                 viewModel.saveWeather(it.toWeather())
                                  Log.d("Room_DEBUG", "${viewModel.findWeatherByName(it.name)}")
-
                             }
                     }
                 }
@@ -91,7 +95,7 @@ class SearchFragment : DaggerFragment(R.layout.fragment_search) {
                         searchView.clearFocus()
                         searchView.setQuery("", false)
                         item.collapseActionView()
-                        viewModel.loadWeather(query)
+                        viewModel.reducer(SearchViewModel.ScreenEvent.OnQueryChangeName(query.toString()))
                         lifecycleScope.launch {
                             viewModel.getWeatherByName(query).let {
                                 viewModel.saveWeather(it.toWeather())
@@ -110,26 +114,37 @@ class SearchFragment : DaggerFragment(R.layout.fragment_search) {
             }
         }
 
-    private fun observeViewModel() {
-        with(viewModel) {
-            loading.observe(viewLifecycleOwner) {
-                binding?.progress?.isVisible = it
-            }
 
-            error.observe(viewLifecycleOwner) {
-                showError(it)
-            }
+    //        navigationName.observe(viewLifecycleOwner) {
+//                if (it == null) return@observe
+//                navigate(it)
+//            }
+//            navigationCoord.observe(viewLifecycleOwner) {
+//                if (it == null) return@observe
+//                navigate(it[0], it[1])
 
-            navigationName.observe(viewLifecycleOwner) {
-                if (it == null) return@observe
-                navigate(it)
+    private fun observeState() {
+        viewModel.state.flowWithLifecycle(viewLifecycleOwner.lifecycle)
+            .onEach { state ->
+                when(state) {
+                    SearchViewModel.ScreenState.Initial -> TODO()
+                    is SearchViewModel.ScreenState.Error -> showError(state.error)
+                    is SearchViewModel.ScreenState.Loading -> showProgress(state.isLoading)
+                    is SearchViewModel.ScreenState.SuccessData -> TODO()
+                }
             }
+            .launchIn(lifecycleScope)
+    }
 
-            navigationCoord.observe(viewLifecycleOwner) {
-                if (it == null) return@observe
-                navigate(it[0], it[1])
+    private fun observeCommand() {
+        viewModel.command.flowWithLifecycle(viewLifecycleOwner.lifecycle)
+            .onEach { command ->
+                when(command) {
+                    SearchViewModel.ScreenCommand.Initial -> TODO()
+                    is SearchViewModel.ScreenCommand.ShowToast -> TODO()
+                }
             }
-        }
+            .launchIn(lifecycleScope)
     }
 
     private fun navigate(query: String?) {
@@ -144,6 +159,10 @@ class SearchFragment : DaggerFragment(R.layout.fragment_search) {
             .replace(R.id.fragment_container, DetailFragment.newInstanceCoord(lat, lon, false))
             .addToBackStack("SearchFragment")
             .commit()
+    }
+
+    private fun showProgress(isLoading: Boolean) {
+        binding?.progress?.isVisible = isLoading
     }
 
     private fun showError(error: String) {

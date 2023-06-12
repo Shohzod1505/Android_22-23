@@ -2,9 +2,14 @@ package ru.itis.kpfu.homework.presentation.mvvm.weather.detail;
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import dagger.android.support.DaggerFragment
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.itis.kpfu.homework.R
 import ru.itis.kpfu.homework.databinding.FragmentDetailBinding
 import ru.itis.kpfu.homework.presentation.mvvm.weather.WeatherUi
@@ -66,6 +71,22 @@ class DetailFragment : DaggerFragment(R.layout.fragment_detail) {
                 }
             }
         }
+    }
+
+    private fun observeViewModelFlow() {
+
+        viewModel.weatherInfoFlow.flowWithLifecycle(viewLifecycleOwner.lifecycle)
+            .onEach {
+                if (it == null) return@onEach
+                binding?.tvCityName?.text = it.name
+                showTemp(it.temperature)
+                showWeatherIcon(it.icon)
+                showHumidity(it.humidity)
+                showHumidityIcon(it.humidity)
+                showWindDirection(it.windDegree)
+                showWindDirectionIcon(it.windDegree)
+            }
+            .launchIn(lifecycleScope)
     }
 
     private fun navigate() {

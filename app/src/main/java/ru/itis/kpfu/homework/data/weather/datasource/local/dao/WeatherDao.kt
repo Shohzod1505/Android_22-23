@@ -9,6 +9,8 @@ interface WeatherDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun save(weather: Weather)
 
+    // Some text
+
     @Delete
     suspend fun delete(weather: Weather)
 
